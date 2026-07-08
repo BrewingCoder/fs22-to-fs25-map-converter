@@ -1,0 +1,45 @@
+{
+  "_comment": "MAP-AGNOSTIC TEST: convert FS22 West End (64x, by Levis) -> FS25 as WE25. Different author => different scene-group names (WestEnd/Trees/forest/gameplay, NOT WW's WildWest/roads/Buildings/trees), so the RASTER core (terrain/farmland/texture/foliage) ports via this config but the SCENE-GRAPH tools (flats/buildings/trees/lights) need per-map group-name mapping (see 'scene_groups' TODO).",
+
+  "identity": {
+    "name": "WestEnd64x",
+    "mod": "FS25_WE25",
+    "title": "WE25",
+    "i3d": "westend.i3d"
+  },
+
+  "source": {
+    "mod": "FS22_WestEnd",
+    "map_i3d": "maps/mapUS/map.i3d",
+    "dem": "maps/mapUS/data/map_dem.png"
+  },
+
+  "cfg": {
+    "map_m": 16384,
+    "name": "WestEnd64x",
+    "size": "64x",
+    "units_per_pixel": 4
+  },
+
+  "scene_groups": {
+    "_note": "West End (Levis) - different author/names than WW. top = its 4 top groups; trees = Trees+forest. roads/buildings/lights sit inside the mixed WestEnd mega-group under unknown subgroup names -> [] = let classify.py content-detect them.",
+    "top": ["gameplay", "WestEnd", "Trees", "forest"],
+    "roads": [],
+    "bridges": [],
+    "tunnels": [],
+    "buildings": [],
+    "lights": [],
+    "trees": ["Trees", "forest"]
+  },
+
+  "material_remaps": { "_note": "TBD once West End's unshipped-texture materials are enumerated." },
+  "assets": { "street_light": "$data/placeables/mapEU/brandless/lightsResidential/streetLight01/streetLight01.i3d" },
+  "tree_palette": {
+    "_note": "US palette (same as WW for now; Levis West End is US midwest). Tune per-map if needed.",
+    "deciduous": ["americanElm", "oak", "aspen", "beech", "betulaErmanii", "boxelder", "northernCatalpa", "shagbarkHickory"],
+    "conifer": ["pinusSylvestris", "lodgepolePine", "pinusTabuliformis"],
+    "stages": ["stage03", "stage04", "stage05"],
+    "linearity_threshold": 0.70,
+    "linearity_radius_m": 18.0
+  }
+}

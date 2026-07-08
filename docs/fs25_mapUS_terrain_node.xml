@@ -1,0 +1,479 @@
+<TerrainTransformGroup name="terrain" static="true" collisionFilterGroup="0x100" collisionFilterMask="0xfffff9c3" nodeId="5857" heightMapId="1" patchSize="65" maxLODDistance="750" heightScale="255" unitsPerPixel="1" lodBlendStart="200" lodBlendEnd="300" lodTextureSize="2048" lodBlendStartDynamic="50" lodBlendEndDynamic="65" detailLodBlendDelta="5" materialId="1464" castShadowMap="true" occNumLODs="1" occMaxLODDistance="300" occPatchSize="65" occLevel="2" occDistanceWeight="1" occMaxAdjacentFaces="10">
+      <OccluderLods>
+        <OccluderLod occLodLevel="0" occFaceCount="100" occMaxHausdorffDistance="7" occMaxHausdorffDistanceExtra="9" occMinHorizontalDistance="1" />
+        <OccluderLod occLodLevel="1" occFaceCount="20" occMaxHausdorffDistance="25" occMaxHausdorffDistanceExtra="30" occMinHorizontalDistance="1" />
+      </OccluderLods>
+      <Layers>
+        <LayerAttributes>
+          <LayerAttribute name="color" type="float_linearRGB" />
+          <LayerAttribute name="softness" type="float" minValue="0" maxValue="1" />
+          <LayerAttribute name="materialId" type="enum" enumValues="field:0;dirt:1;grass:2;sand:3;sound:4;leaves:5;gravel:6;asphalt:7;" />
+          <LayerAttribute name="aiDriveCost" type="float" minValue="-1" maxValue="100" />
+        </LayerAttributes>
+        <Layer name="asphalt01" detailMapId="5" normalMapId="6" heightMapId="7" displacementMapId="8" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="4" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="asphalt02" detailMapId="10" normalMapId="11" heightMapId="12" displacementMapId="13" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="9" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="mudGravel01" detailMapId="15" normalMapId="16" heightMapId="17" displacementMapId="18" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="14" attributes="0.176 0.153 0.133 0.591 1 6"/>
+        <Layer name="mudGravel02" detailMapId="20" normalMapId="21" heightMapId="22" displacementMapId="23" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="19" attributes="0.176 0.153 0.133 0.591 1 6"/>
+        <Layer name="grass01" detailMapId="25" normalMapId="26" heightMapId="27" displacementMapId="28" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="24" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grass02" detailMapId="30" normalMapId="31" heightMapId="32" displacementMapId="33" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="29" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="asphaltCracks01" detailMapId="35" normalMapId="36" heightMapId="37" displacementMapId="38" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="34" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="asphaltCracks02" detailMapId="40" normalMapId="41" heightMapId="42" displacementMapId="43" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="39" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="concreteDirt01" detailMapId="45" normalMapId="46" heightMapId="47" displacementMapId="48" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="44" attributes="0.165 0.149 0.125 0 6 8"/>
+        <Layer name="concreteDirt02" detailMapId="50" normalMapId="51" heightMapId="52" displacementMapId="53" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="49" attributes="0.165 0.149 0.125 0 6 8"/>
+        <Layer name="gravel01" detailMapId="55" normalMapId="56" heightMapId="57" displacementMapId="58" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="54" attributes="0.157 0.141 0.122 0 6 8"/>
+        <Layer name="gravel02" detailMapId="60" normalMapId="61" heightMapId="62" displacementMapId="63" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="59" attributes="0.157 0.141 0.122 0 6 8"/>
+        <Layer name="asphaltTwigs01" detailMapId="65" normalMapId="66" heightMapId="67" displacementMapId="68" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="64" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="asphaltTwigs02" detailMapId="70" normalMapId="71" heightMapId="72" displacementMapId="73" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="69" attributes="0.071 0.063 0.063 0 7 4"/>
+        <Layer name="grassDirtStones01" detailMapId="75" normalMapId="76" heightMapId="77" displacementMapId="78" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="74" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassDirtStones02" detailMapId="80" normalMapId="81" heightMapId="82" displacementMapId="83" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="79" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassClovers01" detailMapId="85" normalMapId="86" heightMapId="87" displacementMapId="88" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.25" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="84" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassClovers02" detailMapId="90" normalMapId="91" heightMapId="92" displacementMapId="93" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="89" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassDirtPatchyDry01" detailMapId="95" normalMapId="96" heightMapId="97" displacementMapId="98" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="94" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassDirtPatchyDry02" detailMapId="100" normalMapId="101" heightMapId="102" displacementMapId="103" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="99" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassDirtPatchy01" detailMapId="105" normalMapId="106" heightMapId="107" displacementMapId="108" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="104" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassDirtPatchy02" detailMapId="110" normalMapId="111" heightMapId="112" displacementMapId="113" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="109" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassMoss01" detailMapId="115" normalMapId="116" heightMapId="117" displacementMapId="118" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="114" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassMoss02" detailMapId="120" normalMapId="121" heightMapId="122" displacementMapId="123" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="119" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassFreshShort01" detailMapId="125" normalMapId="126" heightMapId="127" displacementMapId="128" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="124" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassFreshShort02" detailMapId="130" normalMapId="131" heightMapId="132" displacementMapId="133" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="129" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassCut01" detailMapId="135" normalMapId="136" heightMapId="137" displacementMapId="138" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="134" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassCut02" detailMapId="140" normalMapId="141" heightMapId="142" displacementMapId="143" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="139" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassFreshMiddle01" detailMapId="145" normalMapId="146" heightMapId="147" displacementMapId="148" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="144" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="grassFreshMiddle02" detailMapId="150" normalMapId="151" heightMapId="152" displacementMapId="153" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="149" attributes="0.155 0.082 0.037 0.5 2 8"/>
+        <Layer name="forestGrass01" detailMapId="155" normalMapId="156" heightMapId="157" displacementMapId="158" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="154" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestGrass02" detailMapId="160" normalMapId="161" heightMapId="162" displacementMapId="163" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="159" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestLeaves01" detailMapId="165" normalMapId="166" heightMapId="167" displacementMapId="168" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="164" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestLeaves02" detailMapId="170" normalMapId="171" heightMapId="172" displacementMapId="173" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="169" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestNeedels01" detailMapId="175" normalMapId="176" heightMapId="177" displacementMapId="178" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="174" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestNeedels02" detailMapId="180" normalMapId="181" heightMapId="182" displacementMapId="183" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83" weightMapId="179" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="forestRockRoots01" detailMapId="185" normalMapId="186" heightMapId="187" displacementMapId="188" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.93" weightMapId="184" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="forestRockRoots02" detailMapId="190" normalMapId="191" heightMapId="192" displacementMapId="193" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.93" weightMapId="189" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rock01" detailMapId="195" normalMapId="196" heightMapId="197" displacementMapId="198" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="194" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rock02" detailMapId="200" normalMapId="201" heightMapId="202" displacementMapId="203" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="199" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rockForest01" detailMapId="205" normalMapId="206" heightMapId="207" displacementMapId="208" unitSize="8" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="204" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rockForest02" detailMapId="210" normalMapId="211" heightMapId="212" displacementMapId="213" unitSize="8" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="209" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rockyForestGround01" detailMapId="215" normalMapId="216" heightMapId="217" displacementMapId="218" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="214" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="rockyForestGround02" detailMapId="220" normalMapId="221" heightMapId="222" displacementMapId="223" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="219" attributes="0.22 0.212 0.196 0 7 12"/>
+        <Layer name="pebblesForestGround01" detailMapId="225" normalMapId="226" heightMapId="227" displacementMapId="228" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="224" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="pebblesForestGround02" detailMapId="230" normalMapId="231" heightMapId="232" displacementMapId="233" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="229" attributes="0.155 0.082 0.037 0.591 2 10"/>
+        <Layer name="concrete01" detailMapId="235" normalMapId="236" heightMapId="237" displacementMapId="238" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="234" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concrete02" detailMapId="240" normalMapId="241" heightMapId="242" displacementMapId="243" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="239" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concreteShattered01" detailMapId="245" normalMapId="246" heightMapId="247" displacementMapId="248" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="244" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concreteShattered02" detailMapId="250" normalMapId="251" heightMapId="252" displacementMapId="253" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="249" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concreteGravelSand01" detailMapId="255" normalMapId="256" heightMapId="257" displacementMapId="258" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="254" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concreteGravelSand02" detailMapId="260" normalMapId="261" heightMapId="262" displacementMapId="263" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="259" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concretePebbles01" detailMapId="265" normalMapId="266" heightMapId="267" displacementMapId="268" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="264" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="concretePebbles02" detailMapId="270" normalMapId="271" heightMapId="272" displacementMapId="273" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="269" attributes="0.22 0.212 0.196 0 7 4"/>
+        <Layer name="mudTracks01" detailMapId="275" normalMapId="276" heightMapId="277" displacementMapId="278" unitSize="2" displacementMaxHeight="0.35" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="274" attributes="0.062 0.044 0.027 0.591 1 6"/>
+        <Layer name="mudTracks02" detailMapId="280" normalMapId="281" heightMapId="282" displacementMapId="283" unitSize="2" displacementMaxHeight="0.35" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="279" attributes="0.137 0.098 0.075 0.591 1 6"/>
+        <Layer name="mudDark01" detailMapId="285" normalMapId="286" heightMapId="287" displacementMapId="288" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="284" attributes="0.071 0.055 0.043 0.591 1 6"/>
+        <Layer name="mudDark02" detailMapId="290" normalMapId="291" heightMapId="292" displacementMapId="293" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="289" attributes="0.071 0.055 0.043 0.591 1 6"/>
+        <Layer name="mudLeaves01" detailMapId="295" normalMapId="296" heightMapId="297" displacementMapId="298" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="294" attributes="0.082 0.075 0.027 0.591 1 6"/>
+        <Layer name="mudLeaves02" detailMapId="300" normalMapId="301" heightMapId="302" displacementMapId="303" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="299" attributes="0.082 0.075 0.027 0.591 1 6"/>
+        <Layer name="mudLight01" detailMapId="305" normalMapId="306" heightMapId="307" displacementMapId="308" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="304" attributes="0.137 0.114 0.078 0.591 1 6"/>
+        <Layer name="mudLight02" detailMapId="310" normalMapId="311" heightMapId="312" displacementMapId="313" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="309" attributes="0.137 0.114 0.078 0.591 1 6"/>
+        <Layer name="mudPebbles01" detailMapId="315" normalMapId="316" heightMapId="317" displacementMapId="318" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="314" attributes="0.067 0.051 0.039 0.591 1 6"/>
+        <Layer name="mudPebbles02" detailMapId="320" normalMapId="321" heightMapId="322" displacementMapId="323" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="319" attributes="0.067 0.051 0.039 0.591 1 6"/>
+        <Layer name="mudPebblesLight01" detailMapId="325" normalMapId="326" heightMapId="327" displacementMapId="328" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="324" attributes="0.137 0.114 0.078 0.591 1 6"/>
+        <Layer name="mudPebblesLight02" detailMapId="330" normalMapId="331" heightMapId="332" displacementMapId="333" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.88" weightMapId="329" attributes="0.137 0.114 0.078 0.591 1 6"/>
+        <Layer name="mudDarkGrassPatchy01" detailMapId="335" normalMapId="336" heightMapId="337" displacementMapId="338" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="334" attributes="0.078 0.067 0.043 0.591 1 6"/>
+        <Layer name="mudDarkGrassPatchy02" detailMapId="340" normalMapId="341" heightMapId="342" displacementMapId="343" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="339" attributes="0.078 0.067 0.043 0.591 1 6"/>
+        <Layer name="mudDarkMossPatchy01" detailMapId="345" normalMapId="346" heightMapId="347" displacementMapId="348" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="344" attributes="0.071 0.075 0.043 0.591 1 6"/>
+        <Layer name="mudDarkMossPatchy02" detailMapId="350" normalMapId="351" heightMapId="352" displacementMapId="353" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.99" viscosity="0.91" firmnessWet="0.92" weightMapId="349" attributes="0.071 0.075 0.043 0.591 1 6"/>
+        <Layer name="gravelDirtMoss01" detailMapId="355" normalMapId="356" heightMapId="357" displacementMapId="358" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="354" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelDirtMoss02" detailMapId="360" normalMapId="361" heightMapId="362" displacementMapId="363" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="359" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelPebblesMossPatchy01" detailMapId="365" normalMapId="366" heightMapId="367" displacementMapId="368" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="364" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelPebblesMossPatchy02" detailMapId="370" normalMapId="371" heightMapId="372" displacementMapId="373" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="369" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelPebblesMoss01" detailMapId="375" normalMapId="376" heightMapId="377" displacementMapId="378" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="374" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelPebblesMoss02" detailMapId="380" normalMapId="381" heightMapId="382" displacementMapId="383" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="379" attributes="0.155 0.082 0.037 0.3 6 6"/>
+        <Layer name="gravelSmall01" detailMapId="385" normalMapId="386" heightMapId="387" displacementMapId="388" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="384" attributes="0.157 0.141 0.122 0 6 6"/>
+        <Layer name="gravelSmall02" detailMapId="390" normalMapId="391" heightMapId="392" displacementMapId="393" unitSize="2" displacementMaxHeight="0" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="389" attributes="0.157 0.141 0.122 0 6 6"/>
+        <Layer name="rockFloorTiles01" detailMapId="395" normalMapId="396" heightMapId="397" displacementMapId="398" unitSize="2.5" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="394" attributes="0.208 0.184 0.165 0 7 4"/>
+        <Layer name="rockFloorTiles02" detailMapId="400" normalMapId="401" heightMapId="402" displacementMapId="403" unitSize="2.5" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="399" attributes="0.208 0.184 0.165 0 7 4"/>
+        <Layer name="rockFloorTilesPattern02" detailMapId="405" normalMapId="406" heightMapId="407" displacementMapId="408" unitSize="1.5" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="404" attributes="0.212 0.204 0.188 0 7 4"/>
+        <Layer name="rockFloorTilesPattern01" detailMapId="410" normalMapId="411" heightMapId="412" displacementMapId="413" unitSize="1.5" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="1" firmnessWet="1" weightMapId="409" attributes="0.212 0.204 0.188 0 7 4"/>
+        <Layer name="asphaltDusty01" detailMapId="415" normalMapId="51" heightMapId="416" displacementMapId="417" unitSize="3" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="414" attributes="0.137 0.129 0.116 0 7 4"/>
+        <Layer name="asphaltDusty02" detailMapId="419" normalMapId="420" heightMapId="421" displacementMapId="417" unitSize="3" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="0.85" firmness="1" viscosity="1" firmnessWet="1" weightMapId="418" attributes="0.137 0.129 0.116 0 7 4"/>
+        <Layer name="sand01" detailMapId="423" normalMapId="424" heightMapId="425" displacementMapId="426" unitSize="4" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.82" viscosity="0.73" firmnessWet="0.73" weightMapId="422" attributes="0.23 0.122 0.061 0.591 3 12"/>
+        <Layer name="sand02" detailMapId="428" normalMapId="429" heightMapId="430" displacementMapId="431" unitSize="4" displacementMaxHeight="0.125" blendContrast="0.2" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.82" viscosity="0.73" firmnessWet="0.73" weightMapId="427" attributes="0.23 0.122 0.061 0.591 3 12"/>
+        <OverlayLayer type="groundDetail" name="cultivated01" detailMapId="432" normalMapId="433" heightMapId="434" displacementMapId="435" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.87" viscosity="0.87" firmnessWet="0.72"/>
+        <OverlayLayer type="groundDetail" name="cultivated02" detailMapId="436" normalMapId="437" heightMapId="438" displacementMapId="439" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.87" viscosity="0.87" firmnessWet="0.72"/>
+        <OverlayLayer type="groundDetail" name="directSown01" detailMapId="440" normalMapId="441" heightMapId="442" displacementMapId="443" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.93" viscosity="0.8" firmnessWet="0.85"/>
+        <OverlayLayer type="groundDetail" name="directSown02" detailMapId="444" normalMapId="445" heightMapId="446" displacementMapId="447" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.93" viscosity="0.8" firmnessWet="0.85"/>
+        <OverlayLayer type="groundDetail" name="grass01" detailMapId="448" normalMapId="449" heightMapId="450" displacementMapId="451" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="grass02" detailMapId="452" normalMapId="453" heightMapId="454" displacementMapId="455" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="grassCut01" detailMapId="456" normalMapId="457" heightMapId="458" displacementMapId="459" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="grassCut02" detailMapId="460" normalMapId="461" heightMapId="462" displacementMapId="463" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="1" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="harvestReady01" detailMapId="464" normalMapId="465" heightMapId="466" displacementMapId="467" unitSize="2.5" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.95" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="harvestReady02" detailMapId="468" normalMapId="469" heightMapId="470" displacementMapId="471" unitSize="2.5" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.95" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="planted01" detailMapId="472" normalMapId="473" heightMapId="474" displacementMapId="475" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.91" viscosity="0.87" firmnessWet="0.81"/>
+        <OverlayLayer type="groundDetail" name="planted02" detailMapId="476" normalMapId="477" heightMapId="478" displacementMapId="479" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.91" viscosity="0.87" firmnessWet="0.81"/>
+        <OverlayLayer type="groundDetail" name="plowed01" detailMapId="480" normalMapId="481" heightMapId="482" displacementMapId="483" unitSize="2.65" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="plowed02" detailMapId="484" normalMapId="485" heightMapId="486" displacementMapId="487" unitSize="2.65" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="ridge01" detailMapId="488" normalMapId="489" heightMapId="490" displacementMapId="491" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="ridge02" detailMapId="492" normalMapId="493" heightMapId="494" displacementMapId="495" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="ridgeSown01" detailMapId="496" normalMapId="497" heightMapId="498" displacementMapId="499" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="ridgeSown02" detailMapId="500" normalMapId="501" heightMapId="502" displacementMapId="503" unitSize="3.0" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.79" firmnessWet="0.52"/>
+        <OverlayLayer type="groundDetail" name="rollerLines01" detailMapId="504" normalMapId="505" heightMapId="506" displacementMapId="507" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.94" viscosity="0.92" firmnessWet="0.84"/>
+        <OverlayLayer type="groundDetail" name="rollerLines02" detailMapId="508" normalMapId="509" heightMapId="510" displacementMapId="511" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.94" viscosity="0.92" firmnessWet="0.84"/>
+        <OverlayLayer type="groundDetail" name="seedbed01" detailMapId="512" normalMapId="513" heightMapId="514" displacementMapId="515" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.86" viscosity="0.87" firmnessWet="0.71"/>
+        <OverlayLayer type="groundDetail" name="seedbed02" detailMapId="516" normalMapId="517" heightMapId="518" displacementMapId="519" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.86" viscosity="0.87" firmnessWet="0.71"/>
+        <OverlayLayer type="groundDetail" name="sown01" detailMapId="520" normalMapId="521" heightMapId="522" displacementMapId="523" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.91" viscosity="0.87" firmnessWet="0.76"/>
+        <OverlayLayer type="groundDetail" name="sown02" detailMapId="524" normalMapId="525" heightMapId="526" displacementMapId="527" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.91" viscosity="0.87" firmnessWet="0.76"/>
+        <OverlayLayer type="groundDetail" name="stubbleTillage01" detailMapId="528" normalMapId="529" heightMapId="530" displacementMapId="531" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.87" viscosity="0.8" firmnessWet="0.73"/>
+        <OverlayLayer type="groundDetail" name="stubbleTillage02" detailMapId="532" normalMapId="533" heightMapId="534" displacementMapId="535" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.87" viscosity="0.8" firmnessWet="0.73"/>
+        <OverlayLayer type="groundDetail" name="rolledSeedbed01" detailMapId="504" normalMapId="505" heightMapId="506" displacementMapId="507" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.94" viscosity="0.92" firmnessWet="0.81"/>
+        <OverlayLayer type="groundDetail" name="rolledSeedbed02" detailMapId="508" normalMapId="509" heightMapId="510" displacementMapId="511" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.94" viscosity="0.92" firmnessWet="0.81"/>
+        <OverlayLayer type="groundDetail" name="harvestReadyOther01" detailMapId="536" normalMapId="537" heightMapId="538" displacementMapId="539" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.95" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="groundDetail" name="harvestReadyOther02" detailMapId="540" normalMapId="541" heightMapId="542" displacementMapId="543" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.95" viscosity="0.99" firmnessWet="0.83"/>
+        <OverlayLayer type="spray" name="fertilizer" detailMapId="544" normalMapId="545" heightMapId="546" displacementMapId="547" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="spray" name="lime" detailMapId="548" normalMapId="549" heightMapId="550" displacementMapId="551" unitSize="2.5" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="spray" name="liquidManure" detailMapId="552" normalMapId="553" heightMapId="554" displacementMapId="555" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="spray" name="maizeChopper" detailMapId="556" normalMapId="557" heightMapId="558" displacementMapId="559" unitSize="2.5" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="spray" name="manure" detailMapId="560" normalMapId="561" heightMapId="562" displacementMapId="563" unitSize="4" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="spray" name="strawChopper" detailMapId="564" normalMapId="565" heightMapId="566" displacementMapId="567" unitSize="2" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <OverlayLayer type="custom" name="plowShare" detailMapId="568" normalMapId="569" heightMapId="570" displacementMapId="571" unitSize="6.0952" displacementMaxHeight="0.25" blendContrast="0.5" noiseScale="0.5" noiseSharpness="0.5" porosityAtZeroRoughness="0.9" porosityAtFullRoughness="1" firmness="0.79" viscosity="0.71" firmnessWet="0.52"/>
+        <CombinedLayer name="ASPHALT" layers="asphalt01;asphalt02" noiseFrequency="2"/>
+        <CombinedLayer name="ASPHALT_CRACKS" layers="asphaltCracks01;asphaltCracks02" noiseFrequency="2"/>
+        <CombinedLayer name="ASPHALT_DARK" layers="asphaltTwigs01;asphaltTwigs02" noiseFrequency="2"/>
+        <CombinedLayer name="CONCRETE" layers="concrete01;concrete02" noiseFrequency="2"/>
+        <CombinedLayer name="CONCRETE_SHATTERED" layers="concreteShattered01;concreteShattered02" noiseFrequency="2"/>
+        <CombinedLayer name="CONCRETE_PEBBLES" layers="concretePebbles01;concretePebbles02" noiseFrequency="2"/>
+        <CombinedLayer name="CONCRETE_GRAVEL" layers="concreteGravelSand01;concreteGravelSand02" noiseFrequency="2"/>
+        <CombinedLayer name="CONCRETE_DIRT" layers="concreteDirt01;concreteDirt02" noiseFrequency="2"/>
+        <CombinedLayer name="DIRT_GRAVEL" layers="mudGravel01;mudGravel02" noiseFrequency="2"/>
+        <CombinedLayer name="GRAVEL" layers="gravel01;gravel02" noiseFrequency="2"/>
+        <CombinedLayer name="GRAVELSMALL" layers="gravelSmall01;gravelSmall02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_GRASS" layers="forestGrass01;forestGrass02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_GROUND" layers="pebblesForestGround01;pebblesForestGround02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_STONES" layers="rockyForestGround01;rockyForestGround02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_ROOTS" layers="forestRockRoots01;forestRockRoots02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_LEAVES" layers="forestLeaves01;forestLeaves02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_NEEDELS" layers="forestNeedels01;forestNeedels02" noiseFrequency="2"/>
+        <CombinedLayer name="FOREST_ROCK" layers="rockForest01;rockForest02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASS" layers="grass01;grass02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASS_DIRT" layers="grassDirtStones01;grassDirtStones02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASS_MOSS" layers="grassMoss01;grassMoss02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASS_PATCHY" layers="grassDirtPatchy01;grassDirtPatchy02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASSFRESH_MID" layers="grassFreshMiddle01;grassFreshMiddle02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASSFRESH_SHORT" layers="grassFreshShort01;grassFreshShort02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASSFRESH_CLOVERS" layers="grassClovers01;grassClovers02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASSDRY" layers="grassDirtPatchyDry01;grassDirtPatchyDry02" noiseFrequency="2"/>
+        <CombinedLayer name="GRASSCUT" layers="grassCut01;grassCut02" noiseFrequency="2"/>
+        <CombinedLayer name="MOSS_PEBBLES" layers="gravelPebblesMossPatchy01;gravelPebblesMossPatchy02" noiseFrequency="2"/>
+        <CombinedLayer name="MOSS_STONES" layers="gravelPebblesMoss01;gravelPebblesMoss02" noiseFrequency="2"/>
+        <CombinedLayer name="MOSS_ROCKS" layers="gravelDirtMoss01;gravelDirtMoss02" noiseFrequency="2"/>
+        <CombinedLayer name="MOUNTAINROCK" layers="rock01;rock02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD" layers="mudDark01;mudDark02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD_PEBBLES" layers="mudPebbles01;mudPebbles02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD_GRASS" layers="mudDarkGrassPatchy01;mudDarkGrassPatchy02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD_MOSS" layers="mudDarkMossPatchy01;mudDarkMossPatchy02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD_LEAVES" layers="mudLeaves01;mudLeaves02" noiseFrequency="2"/>
+        <CombinedLayer name="MUDLIGHT" layers="mudLight01;mudLight02" noiseFrequency="2"/>
+        <CombinedLayer name="MUDLIGHT_PEBBLES" layers="mudPebblesLight01;mudPebblesLight02" noiseFrequency="2"/>
+        <CombinedLayer name="MUD_TRACKS" layers="mudTracks01;mudTracks02" noiseFrequency="2"/>
+        <CombinedLayer name="ROCK_FLOOR_TILES" layers="rockFloorTiles01;rockFloorTiles02" noiseFrequency="2"/>
+        <CombinedLayer name="ROCK_FLOOR_TILES_PATTERN" layers="rockFloorTilesPattern01;rockFloorTilesPattern02" noiseFrequency="2"/>
+        <CombinedLayer name="ASPHALT_DUSTY" layers="asphaltDusty01;asphaltDusty02" noiseFrequency="2"/>
+        <CombinedLayer name="SAND" layers="sand01;sand02" noiseFrequency="2"/>
+        <CombinedOverlayLayer name="stubbleTillage" type="groundDetail" layers="stubbleTillage01;stubbleTillage02"/>
+        <CombinedOverlayLayer name="cultivated" type="groundDetail" layers="cultivated01;cultivated02"/>
+        <CombinedOverlayLayer name="seedbed" type="groundDetail" layers="seedbed01;seedbed02"/>
+        <CombinedOverlayLayer name="plowed" type="groundDetail" layers="plowed01;plowed02" customLayer="plowShare"/>
+        <CombinedOverlayLayer name="rolledSeedbed" type="groundDetail" layers="rolledSeedbed01;rolledSeedbed02"/>
+        <CombinedOverlayLayer name="ridge" type="groundDetail" layers="ridge01;ridge02"/>
+        <CombinedOverlayLayer name="sown" type="groundDetail" layers="sown01;sown02"/>
+        <CombinedOverlayLayer name="directSown" type="groundDetail" layers="directSown01;directSown02"/>
+        <CombinedOverlayLayer name="planted" type="groundDetail" layers="planted01;planted02"/>
+        <CombinedOverlayLayer name="ridgeSown" type="groundDetail" layers="ridgeSown01;ridgeSown02"/>
+        <CombinedOverlayLayer name="rollerLines" type="groundDetail" layers="rollerLines01;rollerLines02"/>
+        <CombinedOverlayLayer name="harvestReady" type="groundDetail" layers="harvestReady01;harvestReady02"/>
+        <CombinedOverlayLayer name="harvestReadyOther" type="groundDetail" layers="harvestReadyOther01;harvestReadyOther02"/>
+        <CombinedOverlayLayer name="grass" type="groundDetail" layers="grass01;grass02"/>
+        <CombinedOverlayLayer name="grassCut" type="groundDetail" layers="grassCut01;grassCut02"/>
+        <CombinedOverlayLayer name="fertilizer" type="spray" layers="fertilizer"/>
+        <CombinedOverlayLayer name="manure" type="spray" layers="manure"/>
+        <CombinedOverlayLayer name="liquidManure" type="spray" layers="liquidManure"/>
+        <CombinedOverlayLayer name="lime" type="spray" layers="lime"/>
+        <CombinedOverlayLayer name="strawChopper" type="spray" layers="strawChopper"/>
+        <CombinedOverlayLayer name="maizeChopper" type="spray" layers="maizeChopper"/>
+        <InfoLayer name="environment" fileId="572" numChannels="4" runtime="true">
+          <Group name="Area Type" firstChannel="0" numChannels="3" >
+            <Option value="0" name="Open Land"/>
+            <Option value="1" name="City"/>
+            <Option value="2" name="Village"/>
+            <Option value="3" name="Harbor"/>
+            <Option value="4" name="Industrial"/>
+            <Option value="5" name="Open Water"/>
+          </Group>
+          <Group name="Water" firstChannel="3" numChannels="1" >
+            <Option value="0" name="No Water"/>
+            <Option value="1" name="Near Water"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="farmlands" fileId="573" numChannels="8" runtime="true">
+          <Group name="Lands" firstChannel="0" numChannels="8" >
+            <Option value="1" name="Farmland 1"/>
+            <Option value="2" name="Farmland 2"/>
+            <Option value="3" name="Farmland 3"/>
+            <Option value="4" name="Farmland 4"/>
+            <Option value="5" name="Farmland 5"/>
+            <Option value="6" name="Farmland 6"/>
+            <Option value="7" name="Farmland 7"/>
+            <Option value="8" name="Farmland 8"/>
+            <Option value="9" name="Farmland 9"/>
+            <Option value="10" name="Farmland 10"/>
+            <Option value="11" name="Farmland 11"/>
+            <Option value="12" name="Farmland 12"/>
+            <Option value="13" name="Farmland 13"/>
+            <Option value="14" name="Farmland 14"/>
+            <Option value="15" name="Farmland 15"/>
+            <Option value="16" name="Farmland 16"/>
+            <Option value="17" name="Farmland 17"/>
+            <Option value="18" name="Farmland 18"/>
+            <Option value="19" name="Farmland 19"/>
+            <Option value="20" name="Farmland 20"/>
+            <Option value="21" name="Farmland 21"/>
+            <Option value="22" name="Farmland 22"/>
+            <Option value="23" name="Farmland 23"/>
+            <Option value="24" name="Farmland 24"/>
+            <Option value="25" name="Farmland 25"/>
+            <Option value="26" name="Farmland 26"/>
+            <Option value="27" name="Farmland 27"/>
+            <Option value="28" name="Farmland 28"/>
+            <Option value="29" name="Farmland 29"/>
+            <Option value="30" name="Farmland 30"/>
+            <Option value="31" name="Farmland 31"/>
+            <Option value="32" name="Farmland 32"/>
+            <Option value="33" name="Farmland 33"/>
+            <Option value="34" name="Farmland 34"/>
+            <Option value="35" name="Farmland 35"/>
+            <Option value="36" name="Farmland 36"/>
+            <Option value="37" name="Farmland 37"/>
+            <Option value="38" name="Farmland 38"/>
+            <Option value="39" name="Farmland 39"/>
+            <Option value="40" name="Farmland 40"/>
+            <Option value="41" name="Farmland 41"/>
+            <Option value="42" name="Farmland 42"/>
+            <Option value="43" name="Farmland 43"/>
+            <Option value="44" name="Farmland 44"/>
+            <Option value="45" name="Farmland 45"/>
+            <Option value="46" name="Farmland 46"/>
+            <Option value="47" name="Farmland 47"/>
+            <Option value="48" name="Farmland 48"/>
+            <Option value="49" name="Farmland 49"/>
+            <Option value="50" name="Farmland 50"/>
+            <Option value="51" name="Farmland 51"/>
+            <Option value="52" name="Farmland 52"/>
+            <Option value="53" name="Farmland 53"/>
+            <Option value="54" name="Farmland 54"/>
+            <Option value="55" name="Farmland 55"/>
+            <Option value="56" name="Farmland 56"/>
+            <Option value="57" name="Farmland 57"/>
+            <Option value="58" name="Farmland 58"/>
+            <Option value="59" name="Farmland 59"/>
+            <Option value="60" name="Farmland 60"/>
+            <Option value="61" name="Farmland 61"/>
+            <Option value="62" name="Farmland 62"/>
+            <Option value="63" name="Farmland 63"/>
+            <Option value="64" name="Farmland 64"/>
+            <Option value="65" name="Farmland 65"/>
+            <Option value="66" name="Farmland 66"/>
+            <Option value="67" name="Farmland 67"/>
+            <Option value="68" name="Farmland 68"/>
+            <Option value="69" name="Farmland 69"/>
+            <Option value="70" name="Farmland 70"/>
+            <Option value="71" name="Farmland 71"/>
+            <Option value="72" name="Farmland 72"/>
+            <Option value="73" name="Farmland 73"/>
+            <Option value="74" name="Farmland 74"/>
+            <Option value="75" name="Farmland 75"/>
+            <Option value="76" name="Farmland 76"/>
+            <Option value="77" name="Farmland 77"/>
+            <Option value="78" name="Farmland 78"/>
+            <Option value="79" name="Farmland 79"/>
+            <Option value="80" name="Farmland 80"/>
+            <Option value="81" name="Farmland 81"/>
+            <Option value="82" name="Farmland 82"/>
+            <Option value="83" name="Farmland 83"/>
+            <Option value="84" name="Farmland 84"/>
+            <Option value="85" name="Farmland 85"/>
+            <Option value="86" name="Farmland 86"/>
+            <Option value="87" name="Farmland 87"/>
+            <Option value="88" name="Farmland 88"/>
+            <Option value="89" name="Farmland 89"/>
+            <Option value="90" name="Farmland 90"/>
+            <Option value="91" name="Farmland 91"/>
+            <Option value="92" name="Farmland 92"/>
+            <Option value="93" name="Farmland 93"/>
+            <Option value="94" name="Farmland 94"/>
+            <Option value="95" name="Farmland 95"/>
+            <Option value="96" name="Farmland 96"/>
+            <Option value="97" name="Farmland 97"/>
+            <Option value="98" name="Farmland 98"/>
+            <Option value="99" name="Farmland 99"/>
+            <Option value="100" name="Farmland 100"/>
+            <Option value="255" name="Not buyable"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="indoorMask" fileId="574" numChannels="1" runtime="true">
+          <Group name="State" firstChannel="0" numChannels="1" >
+            <Option value="0" name="Outdoor"/>
+            <Option value="1" name="Indoor"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="navigationCollision" fileId="575" numChannels="1" runtime="true"/>
+        <InfoLayer name="tipCollision" fileId="576" numChannels="1" runtime="true">
+          <Group name="Type" firstChannel="0" numChannels="1" >
+            <Option value="0" name="Default"/>
+            <Option value="1" name="Blocked"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="tipCollisionGenerated" fileId="577" numChannels="2" runtime="true">
+          <Group name="Type" firstChannel="0" numChannels="2" >
+            <Option value="0" name="Default"/>
+            <Option value="1" name="Blocked"/>
+            <Option value="2" name="Blocked Wall"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="placementCollision" fileId="578" numChannels="1" runtime="true">
+          <Group name="Type" firstChannel="0" numChannels="1" >
+            <Option value="0" name="Default"/>
+            <Option value="1" name="Blocked"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="placementCollisionGenerated" fileId="579" numChannels="1" runtime="true">
+          <Group name="Type" firstChannel="0" numChannels="1" >
+            <Option value="0" name="Default"/>
+            <Option value="1" name="Blocked"/>
+          </Group>
+        </InfoLayer>
+        <InfoLayer name="fieldType" fileId="580" numChannels="1" runtime="true">
+          <Group name="Type" firstChannel="0" numChannels="1" >
+            <Option value="0" name="Default"/>
+            <Option value="1" name="Rice"/>
+          </Group>
+        </InfoLayer>
+        <DetailLayer name="terrainDetail" densityMapId="614" numDensityMapChannels="11" compressionChannels="11" cellSize="8" objectMask="0xff00ff" decalLayer="1" viewDistance="75" blendOutDistance="5" densityMapShaderNames="terrainDetailMap" combinedValuesChannels="0 4 0;4 3 0;7 3 0;10 1 0" channelOverlayTypes="groundDetail;;spray">
+          <Group name="GroundType" firstChannel="0" numChannels="4" >
+            <Option value="1" name="Stubble Tillage"/>
+            <Option value="2" name="Cultivated"/>
+            <Option value="3" name="Seedbed"/>
+            <Option value="4" name="Plowed"/>
+            <Option value="5" name="RolledSeedbed"/>
+            <Option value="6" name="Ridge"/>
+            <Option value="7" name="Sown"/>
+            <Option value="8" name="Direct Sown"/>
+            <Option value="9" name="Planted"/>
+            <Option value="10" name="Ridge (Sown)"/>
+            <Option value="11" name="Rollerlines"/>
+            <Option value="12" name="Harvest-Ready"/>
+            <Option value="13" name="Harvest-Ready Other"/>
+            <Option value="14" name="Grass"/>
+            <Option value="15" name="Grass (Cut)"/>
+          </Group>
+          <Group name="GroundAngle" firstChannel="4" numChannels="3" >
+            <Option value="1" name="-22.5 Degrees"/>
+            <Option value="2" name="-45 Degrees"/>
+            <Option value="3" name="-67.5 Degrees"/>
+            <Option value="4" name="-90 Degrees"/>
+            <Option value="5" name="-112.5 Degrees"/>
+            <Option value="6" name="-135 Degrees"/>
+            <Option value="7" name="-177.5 Degrees"/>
+          </Group>
+          <Group name="Spraytype" firstChannel="7" numChannels="3" >
+            <Option value="1" name="Fertilizer"/>
+            <Option value="2" name="Manure"/>
+            <Option value="3" name="Liquidmanure"/>
+            <Option value="4" name="Lime"/>
+            <Option value="5" name="Straw Chopper"/>
+            <Option value="6" name="Maize Chopper"/>
+          </Group>
+          <Group name="Water" firstChannel="10" numChannels="1" >
+            <Option value="1" name="Watered"/>
+          </Group>
+          <DistanceTexture match="1;*;0" fileId="615"/>
+          <DistanceTexture match="2;*;0" fileId="616"/>
+          <DistanceTexture match="3;*;0" fileId="616"/>
+          <DistanceTexture match="4;*;0" fileId="616"/>
+          <DistanceTexture match="5;*;0" fileId="616"/>
+          <DistanceTexture match="6;*;0" fileId="616"/>
+          <DistanceTexture match="7;*;0" fileId="617"/>
+          <DistanceTexture match="8;*;0" fileId="618"/>
+          <DistanceTexture match="9;*;0" fileId="616"/>
+          <DistanceTexture match="10;*;0" fileId="616"/>
+          <DistanceTexture match="11;*;0" fileId="619"/>
+          <DistanceTexture match="12;*;0" fileId="620"/>
+          <DistanceTexture match="13;*;0" fileId="621"/>
+          <DistanceTexture match="14;*;0" fileId="622"/>
+          <DistanceTexture match="*;*;1" fileId="623"/>
+          <DistanceTexture match="*;*;2" fileId="624"/>
+          <DistanceTexture match="*;*;3" fileId="625"/>
+          <DistanceTexture match="*;*;4" fileId="626"/>
+          <DistanceTexture match="*;*;5" fileId="627"/>
+          <DistanceTexture match="*;*;6" fileId="628"/>
+          <DistanceTexture match="1;*;1" fileId="629"/>
+          <DistanceTexture match="7;*;1" fileId="630"/>
+          <DistanceTexture match="11;*;1" fileId="631"/>
+          <DistanceTexture match="12;*;1" fileId="632"/>
+          <DistanceTexture match="13;*;1" fileId="633"/>
+          <DistanceTexture match="14;*;1" fileId="634"/>
+        </DetailLayer>
+        <DetailLayer name="terrainDetailHeight" densityMapId="635" numDensityMapChannels="12" compressionChannels="6" cellSize="8" objectMask="0xff00ff" decalLayer="2" materialId="1196" viewDistance="75" blendOutDistance="5" densityMapShaderNames="terrainFillMap" combinedValuesChannels="0 6 0" heightFirstChannel="6" heightNumChannels="6" maxHeight="4"/>
+        <DisplacementLayer name="terrainDisplacement" size="16384" tileSize="16" numChannels="6" cellSize="2" viewDistance="25" blendOutDistance="5" maxHeight="0.2" densityMapShaderNames="terrainDisplacementMap"/>
+        <FoliageSystem cellSize="8" graphicsCellScale="2" objectMask="16711935" decalLayer="0">
+          <FoliageMultiLayer densityMapId="639" numChannels="4" numTypeIndexChannels="0">
+            <FoliageType name="decoBush" foliageXmlId="581"/>
+          </FoliageMultiLayer>
+          <FoliageMultiLayer densityMapId="640" numChannels="10" numTypeIndexChannels="5" compressionChannels="5">
+            <FoliageType name="decoFoliage" foliageXmlId="582"/>
+            <FoliageType name="decoBushUS" foliageXmlId="583"/>
+            <FoliageType name="meadow" foliageXmlId="584"/>
+            <FoliageType name="forestPlants" foliageXmlId="585"/>
+            <FoliageType name="waterPlants" foliageXmlId="586"/>
+            <FoliageType name="grass" foliageXmlId="587"/>
+            <FoliageType name="wheat" foliageXmlId="588"/>
+            <FoliageType name="canola" foliageXmlId="589"/>
+            <FoliageType name="barley" foliageXmlId="590"/>
+            <FoliageType name="maize" foliageXmlId="591"/>
+            <FoliageType name="potato" foliageXmlId="592"/>
+            <FoliageType name="sugarBeet" foliageXmlId="593"/>
+            <FoliageType name="sunflower" foliageXmlId="594"/>
+            <FoliageType name="soybean" foliageXmlId="595"/>
+            <FoliageType name="oilseedRadish" foliageXmlId="596"/>
+            <FoliageType name="poplar" foliageXmlId="597"/>
+            <FoliageType name="oat" foliageXmlId="598"/>
+            <FoliageType name="sugarCane" foliageXmlId="599"/>
+            <FoliageType name="cotton" foliageXmlId="600"/>
+            <FoliageType name="sorghum" foliageXmlId="601"/>
+            <FoliageType name="beetRoot" foliageXmlId="602"/>
+            <FoliageType name="carrot" foliageXmlId="603"/>
+            <FoliageType name="parsnip" foliageXmlId="604"/>
+            <FoliageType name="grape" foliageXmlId="605"/>
+            <FoliageType name="olive" foliageXmlId="606"/>
+            <FoliageType name="riceLongGrain" foliageXmlId="607"/>
+            <FoliageType name="rice" foliageXmlId="608"/>
+            <FoliageType name="greenBean" foliageXmlId="609"/>
+            <FoliageType name="pea" foliageXmlId="610"/>
+            <FoliageType name="spinach" foliageXmlId="611"/>
+          </FoliageMultiLayer>
+          <FoliageMultiLayer densityMapId="641" numChannels="4" numTypeIndexChannels="0">
+            <FoliageType name="weed" foliageXmlId="612"/>
+          </FoliageMultiLayer>
+          <FoliageMultiLayer densityMapId="642" numChannels="3" numTypeIndexChannels="0">
+            <FoliageType name="stone" foliageXmlId="613"/>
+          </FoliageMultiLayer>
+        </FoliageSystem>
+      </Layers>
+      <ProceduralPlacementMasks blockMaskFileId="2432">
+        <Mask name="PG_Forest" fileId="2423" />
+        <Mask name="PG_Acres" fileId="2424" />
+        <Mask name="PG_Meadow" fileId="2425" />
+        <Mask name="PG_BushLand" fileId="2426" />
+        <Mask name="GEN_Roads" fileId="2427" />
+        <Mask name="GEN_MeadowUPDT" fileId="2428" />
+        <Mask name="GEN_ForestUPDT" fileId="2429" />
+        <Mask name="GEN_ForestBorders" fileId="2430" />
+        <Mask name="GEN_SlopeMask" fileId="2431" />
+      </ProceduralPlacementMasks>
+    </TerrainTransformGroup>

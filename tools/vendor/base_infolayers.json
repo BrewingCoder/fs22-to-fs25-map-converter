@@ -1,0 +1,633 @@
+[
+ {
+  "name": "environment",
+  "numChannels": "4",
+  "runtime": "true",
+  "isData": true,
+  "res": 4096,
+  "groups": [
+   {
+    "name": "Area Type",
+    "firstChannel": "0",
+    "numChannels": "3",
+    "options": [
+     [
+      "0",
+      "Open Land"
+     ],
+     [
+      "1",
+      "City"
+     ],
+     [
+      "2",
+      "Village"
+     ],
+     [
+      "3",
+      "Harbor"
+     ],
+     [
+      "4",
+      "Industrial"
+     ],
+     [
+      "5",
+      "Open Water"
+     ]
+    ]
+   },
+   {
+    "name": "Water",
+    "firstChannel": "3",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "No Water"
+     ],
+     [
+      "1",
+      "Near Water"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "farmlands",
+  "numChannels": "8",
+  "runtime": "true",
+  "isData": true,
+  "res": null,
+  "groups": [
+   {
+    "name": "Lands",
+    "firstChannel": "0",
+    "numChannels": "8",
+    "options": [
+     [
+      "1",
+      "Farmland 1"
+     ],
+     [
+      "2",
+      "Farmland 2"
+     ],
+     [
+      "3",
+      "Farmland 3"
+     ],
+     [
+      "4",
+      "Farmland 4"
+     ],
+     [
+      "5",
+      "Farmland 5"
+     ],
+     [
+      "6",
+      "Farmland 6"
+     ],
+     [
+      "7",
+      "Farmland 7"
+     ],
+     [
+      "8",
+      "Farmland 8"
+     ],
+     [
+      "9",
+      "Farmland 9"
+     ],
+     [
+      "10",
+      "Farmland 10"
+     ],
+     [
+      "11",
+      "Farmland 11"
+     ],
+     [
+      "12",
+      "Farmland 12"
+     ],
+     [
+      "13",
+      "Farmland 13"
+     ],
+     [
+      "14",
+      "Farmland 14"
+     ],
+     [
+      "15",
+      "Farmland 15"
+     ],
+     [
+      "16",
+      "Farmland 16"
+     ],
+     [
+      "17",
+      "Farmland 17"
+     ],
+     [
+      "18",
+      "Farmland 18"
+     ],
+     [
+      "19",
+      "Farmland 19"
+     ],
+     [
+      "20",
+      "Farmland 20"
+     ],
+     [
+      "21",
+      "Farmland 21"
+     ],
+     [
+      "22",
+      "Farmland 22"
+     ],
+     [
+      "23",
+      "Farmland 23"
+     ],
+     [
+      "24",
+      "Farmland 24"
+     ],
+     [
+      "25",
+      "Farmland 25"
+     ],
+     [
+      "26",
+      "Farmland 26"
+     ],
+     [
+      "27",
+      "Farmland 27"
+     ],
+     [
+      "28",
+      "Farmland 28"
+     ],
+     [
+      "29",
+      "Farmland 29"
+     ],
+     [
+      "30",
+      "Farmland 30"
+     ],
+     [
+      "31",
+      "Farmland 31"
+     ],
+     [
+      "32",
+      "Farmland 32"
+     ],
+     [
+      "33",
+      "Farmland 33"
+     ],
+     [
+      "34",
+      "Farmland 34"
+     ],
+     [
+      "35",
+      "Farmland 35"
+     ],
+     [
+      "36",
+      "Farmland 36"
+     ],
+     [
+      "37",
+      "Farmland 37"
+     ],
+     [
+      "38",
+      "Farmland 38"
+     ],
+     [
+      "39",
+      "Farmland 39"
+     ],
+     [
+      "40",
+      "Farmland 40"
+     ],
+     [
+      "41",
+      "Farmland 41"
+     ],
+     [
+      "42",
+      "Farmland 42"
+     ],
+     [
+      "43",
+      "Farmland 43"
+     ],
+     [
+      "44",
+      "Farmland 44"
+     ],
+     [
+      "45",
+      "Farmland 45"
+     ],
+     [
+      "46",
+      "Farmland 46"
+     ],
+     [
+      "47",
+      "Farmland 47"
+     ],
+     [
+      "48",
+      "Farmland 48"
+     ],
+     [
+      "49",
+      "Farmland 49"
+     ],
+     [
+      "50",
+      "Farmland 50"
+     ],
+     [
+      "51",
+      "Farmland 51"
+     ],
+     [
+      "52",
+      "Farmland 52"
+     ],
+     [
+      "53",
+      "Farmland 53"
+     ],
+     [
+      "54",
+      "Farmland 54"
+     ],
+     [
+      "55",
+      "Farmland 55"
+     ],
+     [
+      "56",
+      "Farmland 56"
+     ],
+     [
+      "57",
+      "Farmland 57"
+     ],
+     [
+      "58",
+      "Farmland 58"
+     ],
+     [
+      "59",
+      "Farmland 59"
+     ],
+     [
+      "60",
+      "Farmland 60"
+     ],
+     [
+      "61",
+      "Farmland 61"
+     ],
+     [
+      "62",
+      "Farmland 62"
+     ],
+     [
+      "63",
+      "Farmland 63"
+     ],
+     [
+      "64",
+      "Farmland 64"
+     ],
+     [
+      "65",
+      "Farmland 65"
+     ],
+     [
+      "66",
+      "Farmland 66"
+     ],
+     [
+      "67",
+      "Farmland 67"
+     ],
+     [
+      "68",
+      "Farmland 68"
+     ],
+     [
+      "69",
+      "Farmland 69"
+     ],
+     [
+      "70",
+      "Farmland 70"
+     ],
+     [
+      "71",
+      "Farmland 71"
+     ],
+     [
+      "72",
+      "Farmland 72"
+     ],
+     [
+      "73",
+      "Farmland 73"
+     ],
+     [
+      "74",
+      "Farmland 74"
+     ],
+     [
+      "75",
+      "Farmland 75"
+     ],
+     [
+      "76",
+      "Farmland 76"
+     ],
+     [
+      "77",
+      "Farmland 77"
+     ],
+     [
+      "78",
+      "Farmland 78"
+     ],
+     [
+      "79",
+      "Farmland 79"
+     ],
+     [
+      "80",
+      "Farmland 80"
+     ],
+     [
+      "81",
+      "Farmland 81"
+     ],
+     [
+      "82",
+      "Farmland 82"
+     ],
+     [
+      "83",
+      "Farmland 83"
+     ],
+     [
+      "84",
+      "Farmland 84"
+     ],
+     [
+      "85",
+      "Farmland 85"
+     ],
+     [
+      "86",
+      "Farmland 86"
+     ],
+     [
+      "87",
+      "Farmland 87"
+     ],
+     [
+      "88",
+      "Farmland 88"
+     ],
+     [
+      "89",
+      "Farmland 89"
+     ],
+     [
+      "90",
+      "Farmland 90"
+     ],
+     [
+      "91",
+      "Farmland 91"
+     ],
+     [
+      "92",
+      "Farmland 92"
+     ],
+     [
+      "93",
+      "Farmland 93"
+     ],
+     [
+      "94",
+      "Farmland 94"
+     ],
+     [
+      "95",
+      "Farmland 95"
+     ],
+     [
+      "96",
+      "Farmland 96"
+     ],
+     [
+      "97",
+      "Farmland 97"
+     ],
+     [
+      "98",
+      "Farmland 98"
+     ],
+     [
+      "99",
+      "Farmland 99"
+     ],
+     [
+      "100",
+      "Farmland 100"
+     ],
+     [
+      "255",
+      "Not buyable"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "indoorMask",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 16384,
+  "groups": [
+   {
+    "name": "State",
+    "firstChannel": "0",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "Outdoor"
+     ],
+     [
+      "1",
+      "Indoor"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "navigationCollision",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 8192,
+  "groups": []
+ },
+ {
+  "name": "tipCollision",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 16384,
+  "groups": [
+   {
+    "name": "Type",
+    "firstChannel": "0",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "Default"
+     ],
+     [
+      "1",
+      "Blocked"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "tipCollisionGenerated",
+  "numChannels": "2",
+  "runtime": "true",
+  "isData": true,
+  "res": 16384,
+  "groups": [
+   {
+    "name": "Type",
+    "firstChannel": "0",
+    "numChannels": "2",
+    "options": [
+     [
+      "0",
+      "Default"
+     ],
+     [
+      "1",
+      "Blocked"
+     ],
+     [
+      "2",
+      "Blocked Wall"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "placementCollision",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 4096,
+  "groups": [
+   {
+    "name": "Type",
+    "firstChannel": "0",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "Default"
+     ],
+     [
+      "1",
+      "Blocked"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "placementCollisionGenerated",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 4096,
+  "groups": [
+   {
+    "name": "Type",
+    "firstChannel": "0",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "Default"
+     ],
+     [
+      "1",
+      "Blocked"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "name": "fieldType",
+  "numChannels": "1",
+  "runtime": "true",
+  "isData": true,
+  "res": 4096,
+  "groups": [
+   {
+    "name": "Type",
+    "firstChannel": "0",
+    "numChannels": "1",
+    "options": [
+     [
+      "0",
+      "Default"
+     ],
+     [
+      "1",
+      "Rice"
+     ]
+    ]
+   }
+  ]
+ }
+]

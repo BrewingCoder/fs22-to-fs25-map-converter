@@ -1,0 +1,188 @@
+{
+  "_comment": "Declarative WW FS22->FS25 conversion config (R6). The pipeline (convert.py) reads this; edit here + re-run, never the output. MANDATE (user 2026-07-06): EVERY map-specific value lives here so the tool CORE stays map-agnostic - point it at any FS22 map's config and go. Ship a config per tuned map = 'we support maps X, Y, Z'.",
+
+  "identity": {
+    "name": "WildWest",
+    "mod": "FS25_WildWest_16x",
+    "title": "Anon's Wild Western",
+    "i3d": "wildwest.i3d"
+  },
+
+  "source": {
+    "_CRITICAL": "SOURCE OF TRUTH = the FS22 ORIGINAL (read-only). READ the original; GENERATE clean FS25. Never copy map-data.",
+    "mod": "FS22_WildWest_16x",
+    "map_i3d": "maps/cazz16x.i3d",
+    "dem": "maps/data/map_dem.png",
+    "height_scale": 255
+  },
+
+  "cfg": {
+    "_note": "Core map dimensions shared across tools. map_m = terrain size in metres (WW 16x = 8192).",
+    "map_m": 8192
+  },
+
+  "scene_groups": {
+    "_note": "Top-level scene groups to search + subgroup names per class. MAP-SPECIFIC (WW here; West End differs). Empty list [] = let classify.py content-detect instead.",
+    "top": ["WildWest", "WildWest2"],
+    "roads": ["roads"],
+    "bridges": ["Bridges"],
+    "tunnels": ["tunnels"],
+    "buildings": ["Buildings", "pierspot", "hotelMedium01", "placeholders"],
+    "curtain": ["horizone"],
+    "lights": ["RoadLights", "hwyLights", "SellpointLights"],
+    "trees": ["trees"],
+    "water": ["waterPlanes"],
+    "shop": {"source_top": "gameplay", "source_group": "vehicleShop"}
+  },
+
+  "material_remaps": {
+    "_note": "WW materials whose textures WW never shipped -> base-game FS25 substitutes (max base-game = upgrade-proof).",
+    "roadBarrier_mat": {
+      "Texture": "$data/maps/mapUS/textures/props/trafficGuardrail_diffuse.png",
+      "Normalmap": "$data/maps/mapUS/textures/props/trafficGuardrail_normal.png",
+      "Glossmap": "$data/maps/mapUS/textures/props/trafficGuardrail_specular.png"
+    }
+  },
+
+  "assets": {
+    "_note": "Chosen base-game FS25 assets referenced per map.",
+    "street_light": "$data/placeables/mapEU/brandless/lightsResidential/streetLight01/streetLight01.i3d",
+    "street_light_yaw_offset": 90.0
+  },
+
+  "flats": {
+    "_note": "build_flats: WW material NAMES to force-treat as co-planar decal overlays (beyond the name-keyword + alphaBlending heuristics). WW-specific.",
+    "decal_materials": ["Material.003"]
+  },
+
+  "ground_cover": {
+    "_note": "build_ground_cover: base-game FS25 foliage baked over WW's grass pastures (off dirt + fields). fruits VALUES are GE-verified on-disk (NOT a formula - see ww-pasture-foliage memory). pasture_layer/exclude_layers = WW weight-layer names.",
+    "grass_value": 134,
+    "meadow_value": 131,
+    "grass_pct": 64,
+    "pasture_layer": "grass",
+    "exclude_layers": ["dirt"]
+  },
+
+  "tree_palette": {
+    "_note": "Base-game FS25 tree species (US) + placement tuning. deciduous = single-file spline rows + lone; conifer = forest stands.",
+    "deciduous": ["americanElm", "oak", "aspen", "beech", "betulaErmanii", "boxelder", "northernCatalpa", "shagbarkHickory"],
+    "conifer": ["pinusSylvestris", "lodgepolePine", "pinusTabuliformis"],
+    "conifer_keywords": ["pine", "spruce", "stonepine", "fir", "cedar"],
+    "stages": ["stage03", "stage04", "stage05"],
+    "linearity_threshold": 0.70,
+    "linearity_radius_m": 18.0
+  },
+
+  "water_plane": {
+    "_note": "FS25-NATIVE water (no FS22 assets). ONE oceanShader plane PER connected DEM basin (below capture_level_m), each at default_level_m unless a 'bodies' entry overrides it (nearest component centroid to 'point' [worldX,worldZ]). Planes touching a map edge extend past it (edge_extent_m) for the open-water horizon; the terrain clips each to its waterline. Material = FS25 $data/maps/mapUS/textures/waterplanes.i3d 'waterSim_mat', verbatim. WW: river+west-ocean sit ~1.5 m below the field-41 pond, hence per-basin levels.",
+    "default_level_m": 86.5,
+    "capture_level_m": 88.0,
+    "cell_size_m": 25,
+    "edge_extent_m": 4000,
+    "margin_m": 60,
+    "min_area_m2": 500,
+    "bodies": [
+      {"name": "field41_pond", "point": [181, -387], "level_m": 88.0}
+    ],
+    "material": {
+      "shader": "$data/shaders/oceanShader.xml",
+      "normalmap": "$data/maps/textures/shared/water_normal.png",
+      "depthScale": "0.4",
+      "underwaterFogColor": "0.09 0.14 0.11 1.0",
+      "underwaterFogDepth": "2.4 2.5 1.3 1.0"
+    }
+  },
+
+  "farmland_classification": {
+    "_note": "Read from the FS22 farmlands.xml per-<farmland> COMMENTS.",
+    "buyable_labels": ["field", "forest", "bare land", "placeable area", "Main Farm", "BGA"],
+    "non_buyable_labels": ["Map Freeway", "Main Map Crap", "Production", "GC Tree Nursery", "GC Seed Maker"]
+  },
+
+  "ground_layer_map": {
+    "_note": "build_ground_texture: WW FS22 weight-layer -> FS25 engine layer (WW's actually-painted subset).",
+    "dirt": "mudDark", "asphaltAlpine": "asphalt", "gravelMoss": "gravelPebblesMoss", "gravelDirt": "gravel", "concrete": "concrete"
+  },
+
+  "productions": {
+    "_note": "WW productionPoint placeables -> native FS25 productionPoint on the FS25 GENERIC production i3d ($data/placeables/brandless/productionPointsGeneric/<name>) which ships input trigger + pallet-output spawn + POI. Its VISUAL is HIDDEN (renderable shapes -> nonRenderable, occluder off) so WW's OWN extracted building is what you see; FS22 <productions>+<storage> are injected for faithful input/output cycles, and triggers are snapped to the FS22 point's OWN authored node positions. Drops the base-game placeable (kills the visual double-up). The FS25 generic is auto-picked by OUTPUT fill-type overlap (works map-agnostically - WW raisinFactory auto-maps to grapeProcessingUnit by its GRAPEJUICE+RAISINS outputs), so 'map' below is only an OVERRIDE for points auto-match gets wrong / has no analog. out_subdir holds the generated XMLs + hidden i3ds.",
+    "generic_dir": "brandless/productionPointsGeneric",
+    "out_subdir": "production_fs25",
+    "map": {
+      "_note": "OPTIONAL override: WW placeable basename -> FS25 generic folder. Empty = fully auto (output-overlap match)."
+    },
+    "trigger_offset": {
+      "_note": "Optional [dx,dz] fine-tune NUDGE on top of the FS22-aligned triggers. build_placeables rewrites the hidden generic i3d's trigger nodes to the FS22 point's OWN authored locals (unload on the apron, WRENCH at the door), so at the raw WW origin they already match WW's building - add an entry only if a specific point needs a small manual shift."
+    }
+  },
+
+  "crops": {
+    "_note": "build_crops: WW custom FS22 crops -> FS25. Auto-classifies each WW fruitType: BASE (already in the terrain fruits-FML) skipped; PORT if WW ships maps/foliage/<crop>/ (converted FS22->FS25 foliageType); NATIVE if FS25 ships $data/foliage/<crop>/ (e.g. onion - just referenced). categories = fillTypeCategories each raw crop joins (combine harvest + trailer haul + sell); windrow_categories = for crop windrow fills (bales).",
+    "categories": ["COMBINE", "BULK", "AUGERWAGON", "SHOVEL", "TRAINWAGON", "FARMSILO", "LOADINGVEHICLE", "SELLINGSTATION_FIELDFRUITS"],
+    "windrow_categories": ["SELLINGSTATION_BALES"],
+    "_harvest_note": "fruitTypeCategories = which HARVESTER/planter a crop works with (FS25 GRAINHEADER=combine grain header, DIRECTCUTTER=draper, SOWINGMACHINE=seeder can plant it, MOWER, etc). The map's <fruitTypeCategories> REPLACES the base list, so build_crops emits the FULL base membership + these additions. Beet/root harvesters (TOPLIFTINGHARVESTER) can't take custom fruits without a custom header -> cabbage/onion get NO harvest group for now (plantable, not harvestable).",
+    "_plant_note": "plant_categories are applied to EVERY custom crop (incl. cabbage/onion) so any sower/planter can plant them: SOWINGMACHINE=seeder, PLANTER/PLANTER_SMALL=precision planters.",
+    "plant_categories": ["SOWINGMACHINE", "PLANTER", "PLANTER_SMALL"],
+    "harvest_groups": {
+      "combine": {
+        "crops": ["hemp", "hops", "lavender", "tobacco", "millet", "rye"],
+        "categories": ["GRAINHEADER", "DIRECTCUTTER", "MAIZECUTTER", "SOWINGMACHINE", "MOWER", "COMBINE_MOWER"]
+      },
+      "forage": {
+        "crops": ["alfalfa"],
+        "categories": ["DIRECTCUTTER", "SOWINGMACHINE", "MOWER", "WEEDER"]
+      }
+    }
+  },
+
+  "placeable_map": {
+    "_note": "build_placeables (NON-selling placeables only; selling stations are handled by 'sellpoints'). override = WW placeable basename -> FS25 base-game placeable path (under $data/placeables/). skip = WW-custom placeables with no FS25 analog. Everything else auto-matches by name against the FS25 placeables index.",
+    "override": {
+      "farmHouse.xml": "brandless/constructibles/buildableFarmHouse01/buildableFarmHouse01.xml",
+      "sheepLarge.xml": "rudolfHormann/sheepBarnBig/sheepBarnBig.xml",
+      "barnOpen.xml": "brandless/gardenSheds/level03/gardenShed03.xml",
+      "oldShedDoored.xml": "brandless/gardenSheds/level02/gardenShed02.xml",
+      "Garage.xml": "brandless/constructibles/farmGarageConstructable01/farmGarageConstructable01.xml",
+      "bga1mw.xml": "planET/bgaBunkerSilo/bgaBunkerSilo.xml",
+      "gasStation.xml": "mapUS/sellingPoints/gasStation/gasStation01.xml",
+      "fastFoodRestaurant.xml": "mapAS/sellingPoints/sellingStationRestaurant/sellingStationRestaurant.xml"
+    },
+    "skip": ["CattleGuarrdSM.xml", "FS22_FermentingSilo.xml", "WinPump.xml", "waterFillTriggers.xml",
+             "fencesResidentialLevel01Singleton.xml", "farma800_multi.xml", "liquidFlatBottomTank1630b.xml",
+             "treeNursery.xml", "pigFood.xml", "tmr.xml", "manureStation.xml", "buyfrombarn.xml", "Buy_Animal_Food.xml"]
+  },
+
+  "sellpoints": {
+    "_note": "WW selling stations (type=sellingStation) are GENERATED as native FS25-schema station XMLs at maps/<out_subdir>/, referenced $mapdir$/maps/<out_subdir>/<name> (the shipping-FS25 Kansas pattern). Each carries WW's storeData <name> (correct price-screen label - fixes 'Harbor doesn't show') + broad fillTypeCategories (accepts EVERY FS25 crop/product, DLC-proof - fixes 'crops can't be sold') on the base-game sellingStationGeneric i3d (a VISIBLE sell platform - the FS22 sell points dynamically loaded this same generic model; a trigger-only base left the sell points with no distinctive shape). The placeable is offset-compensated (unload-node local offset + WW net-yaw) so the unload trigger lands on the exact FS22 spot. Production points are NOT here.",
+    "template": "mapUS/sellingPoints/grainBargeTerminal01Triggers/grainBargeTerminal01Triggers.xml",
+    "visible_model": "$data/placeables/shared/sellingStationGeneric/sellingStationGenericNoCover.i3d",
+    "visible_model_link": "unloadNodeTrailer",
+    "visible_model_offset_y": -0.2,
+    "yaw_offset": 90.0,
+    "categories": "SELLINGSTATION_FIELDFRUITS SELLINGSTATION_PRODUCTS SELLINGSTATION_PRODUCTSFOOD SELLINGSTATION_BALES SELLINGSTATION_WOOD",
+    "out_subdir": "sellpoints_fs25",
+    "skip": ["manureStation.xml"],
+    "name_overrides": {
+      "_note": "WW names that are FS22 base-game $l10n_* keys (FS25's key namespace differs -> would show raw key). Bake clean literals.",
+      "sellingStationMainGrainSilo.xml": "Main Grain Silo",
+      "sellingStationShoppingMall.xml": "Shopping Mall",
+      "sellingStationBowlingCenter.xml": "Bowling Center Restaurant",
+      "bhp.xml": "Biomass Plant"
+    }
+  },
+
+  "tweaks": {
+    "_note": "build_tweaks (FINAL step): per-map manual OVERRIDES applied to the generated output as the last word, so one-off corrections survive every re-run without hand-editing (convert.py clobbers the output). Each entry calls out ONE thing by name and nudges it. where=placeable (maps/placeables.xml, match by storeData name/filename/uniqueId) or i3d (map scene graph, match by node name or parent>child>leaf). action=rotate|translate|scale|delete. rotate yaw/pitch/roll + translate dx/dy/dz + scale are DELTAS/multipliers on the existing value. Matches fail-loud on 0 or >1 hits.",
+    "list": [
+      {"where": "placeable", "match": "Wild West Warehouse Market", "action": "rotate", "yaw": 90,
+       "_comment": "sell point faces the wrong way in FS25; rotate 90deg."}
+    ]
+  },
+
+  "rules": {
+    "no_fences": true,
+    "trees_base_game_analogs_only": true,
+    "source_read_only": true
+  }
+}

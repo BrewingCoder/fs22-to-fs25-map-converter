@@ -1,0 +1,13 @@
+Vendored copies of the two shared code deps (do not hand-edit; re-copy from source).
+
+From https://github.com/BrewingCoder/giants-fs-codecs (MIT):
+  grle_codec.py  gdm_codec.py  gdm_fruits_codec.py  shapes_codec.py  shapes_cipher.py  vendor/I3DCipher.cs
+From https://github.com/BrewingCoder/fs25-empty-map (MIT):
+  mapcfg.py  gen_i3d.py  gen_data.py  gen_configs.py  binfmt.py
+  base_terrain_layers.json  base_foliage.json  base_infolayers.json
+
+shapes_codec.py imports shapes_cipher (same dir); shapes_cipher loads vendor/I3DCipher.cs (the 4096-word key).
+
+fruits_header_11ch6tic.gdm - 17-byte HEADER stub (mapsize 16384 / chunk 32 / 2 ranges, widths [6,5], split at
+  channel 6). Used by build_crops as the gdm_fruits_codec.encode_full() header template (only the header is read,
+  not pixels), so no multi-MB template .gdm is needed. Extracted from a densityMap_fruits.gdm header.

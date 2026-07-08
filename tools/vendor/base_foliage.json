@@ -1,0 +1,179 @@
+{
+ "attrs": {
+  "cellSize": "8",
+  "graphicsCellScale": "2",
+  "objectMask": "16711935",
+  "decalLayer": "0"
+ },
+ "layers": [
+  {
+   "attrs": {
+    "numChannels": "4",
+    "numTypeIndexChannels": "0"
+   },
+   "density": "$data/maps/mapUS/data/densityMap_groundFoliage.png",
+   "types": [
+    {
+     "name": "decoBush",
+     "foliage": "$data/foliage/decoBush/decoBush.xml"
+    }
+   ]
+  },
+  {
+   "attrs": {
+    "numChannels": "10",
+    "numTypeIndexChannels": "5",
+    "compressionChannels": "5"
+   },
+   "density": "$data/maps/mapUS/data/densityMap_fruits.png",
+   "types": [
+    {
+     "name": "decoFoliage",
+     "foliage": "$data/foliage/decoFoliage/decoFoliageUS.xml"
+    },
+    {
+     "name": "decoBushUS",
+     "foliage": "$data/foliage/decoBush/decoBushUS/decoBushUS.xml"
+    },
+    {
+     "name": "meadow",
+     "foliage": "$data/foliage/meadow/meadowUS/meadowUS.xml"
+    },
+    {
+     "name": "forestPlants",
+     "foliage": "$data/foliage/forestPlants/forestPlants.xml"
+    },
+    {
+     "name": "waterPlants",
+     "foliage": "$data/foliage/waterPlants/waterPlants.xml"
+    },
+    {
+     "name": "grass",
+     "foliage": "$data/foliage/grass/grass.xml"
+    },
+    {
+     "name": "wheat",
+     "foliage": "$data/foliage/wheat/wheat.xml"
+    },
+    {
+     "name": "canola",
+     "foliage": "$data/foliage/canola/canola.xml"
+    },
+    {
+     "name": "barley",
+     "foliage": "$data/foliage/barley/barley.xml"
+    },
+    {
+     "name": "maize",
+     "foliage": "$data/foliage/maize/maize.xml"
+    },
+    {
+     "name": "potato",
+     "foliage": "$data/foliage/potato/potato.xml"
+    },
+    {
+     "name": "sugarBeet",
+     "foliage": "$data/foliage/sugarbeet/sugarbeet.xml"
+    },
+    {
+     "name": "sunflower",
+     "foliage": "$data/foliage/sunflower/sunflower.xml"
+    },
+    {
+     "name": "soybean",
+     "foliage": "$data/foliage/soybean/soybean.xml"
+    },
+    {
+     "name": "oilseedRadish",
+     "foliage": "$data/foliage/oilseedRadish/oilseedRadish.xml"
+    },
+    {
+     "name": "poplar",
+     "foliage": "$data/foliage/poplar/poplar.xml"
+    },
+    {
+     "name": "oat",
+     "foliage": "$data/foliage/oat/oat.xml"
+    },
+    {
+     "name": "sugarCane",
+     "foliage": "$data/foliage/sugarcane/sugarcane.xml"
+    },
+    {
+     "name": "cotton",
+     "foliage": "$data/foliage/cotton/cotton.xml"
+    },
+    {
+     "name": "sorghum",
+     "foliage": "$data/foliage/sorghum/sorghum.xml"
+    },
+    {
+     "name": "beetRoot",
+     "foliage": "$data/foliage/beetRoot/beetRoot.xml"
+    },
+    {
+     "name": "carrot",
+     "foliage": "$data/foliage/carrot/carrot.xml"
+    },
+    {
+     "name": "parsnip",
+     "foliage": "$data/foliage/parsnip/parsnip.xml"
+    },
+    {
+     "name": "grape",
+     "foliage": "$data/foliage/grape/grape.xml"
+    },
+    {
+     "name": "olive",
+     "foliage": "$data/foliage/olive/olive.xml"
+    },
+    {
+     "name": "riceLongGrain",
+     "foliage": "$data/foliage/riceLongGrain/riceLongGrain.xml"
+    },
+    {
+     "name": "rice",
+     "foliage": "$data/foliage/rice/rice.xml"
+    },
+    {
+     "name": "greenBean",
+     "foliage": "$data/foliage/greenBean/greenBean.xml"
+    },
+    {
+     "name": "pea",
+     "foliage": "$data/foliage/pea/pea.xml"
+    },
+    {
+     "name": "spinach",
+     "foliage": "$data/foliage/spinach/spinach.xml"
+    }
+   ]
+  },
+  {
+   "attrs": {
+    "numChannels": "4",
+    "numTypeIndexChannels": "0"
+   },
+   "density": "$data/maps/mapUS/data/densityMap_weed.png",
+   "types": [
+    {
+     "name": "weed",
+     "foliage": "$data/foliage/weed/weed.xml"
+    }
+   ]
+  },
+  {
+   "attrs": {
+    "numChannels": "3",
+    "numTypeIndexChannels": "0"
+   },
+   "density": "$data/maps/mapUS/data/densityMap_stones.png",
+   "types": [
+    {
+     "name": "stone",
+     "foliage": "$data/foliage/stone/stone.xml"
+    }
+   ]
+  }
+ ]
+}

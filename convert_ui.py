@@ -8,13 +8,14 @@ the chosen <map>.convert.json; the two install folders are per-machine (env), ne
 
 Run:  python convert_ui.py       (needs only Python's stdlib tkinter)
 """
-import os, sys, glob, json, threading, subprocess, queue
+import os, sys, glob, json, threading, subprocess, queue, datetime
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
 REPO = os.path.dirname(os.path.abspath(__file__))
 TOOLS = os.path.join(REPO, "tools")
 CONVERT = os.path.join(TOOLS, "convert.py")
+LOG_DIR = os.path.join(REPO, "logs")   # timestamped per-run logs (gitignored); attach to GitHub issues
 
 DEF_FS22 = os.environ.get("FS22_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 22\data")
 DEF_FS25 = os.environ.get("FS25_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 25\data")
@@ -41,6 +42,8 @@ class App:
     def __init__(self, root):
         self.root = root
         self.proc = None
+        self.logf = None
+        self.log_path = None
         self.q = queue.Queue()
         root.title("FS22 -> FS25 Map Converter")
         root.geometry("820x620")
@@ -177,10 +180,37 @@ class App:
         env["FS25_DATA"] = opts["fs25"]
         env["FS25_MODS"] = opts["mods"]
         env["PYTHONUNBUFFERED"] = "1"
+        # per-run timestamped log file (date+time) - full transcript for investigating failures / GitHub issues
+        self._open_log(opts)
         cmd = [sys.executable, CONVERT]
         if not self.deploy_var.get():
             cmd.append("--no-deploy")
         threading.Thread(target=self._worker, args=(cmd, env), daemon=True).start()
+
+    def _open_log(self, opts):
+        try:
+            os.makedirs(LOG_DIR, exist_ok=True)
+            now = datetime.datetime.now()
+            name = os.path.splitext(os.path.basename(opts["cfg"]))[0]
+            self.log_path = os.path.join(LOG_DIR, f"convert_{name}_{now:%Y-%m-%d_%H-%M-%S}.log")
+            self.logf = open(self.log_path, "w", encoding="utf-8")
+            header = [
+                "FS22 -> FS25 Map Converter - run log",
+                f"time         : {now.isoformat(timespec='seconds')}",
+                f"config       : {opts['cfg']}",
+                f"FS22 install : {opts['fs22']}",
+                f"FS22 mods    : {opts['fs22_mods']}",
+                f"FS25 install : {opts['fs25']}",
+                f"FS25 mods    : {opts['mods']}",
+                f"deploy       : {self.deploy_var.get()}",
+                f"python       : {sys.version.split()[0]}   platform: {sys.platform}",
+                "=" * 72, "",
+            ]
+            self.logf.write("\n".join(header)); self.logf.flush()
+            self._append(f"Logging to: {self.log_path}\n\n")
+        except Exception as e:
+            self.logf = None
+            self._append(f"[warning] could not open log file: {e}\n")
 
     def _worker(self, cmd, env):
         try:
@@ -206,6 +236,11 @@ class App:
                 kind, payload = self.q.get_nowait()
                 if kind == "log":
                     self._append(payload)
+                    if self.logf:
+                        try:
+                            self.logf.write(payload); self.logf.flush()
+                        except Exception:
+                            pass
                     if payload.startswith("[STEP "):
                         try:
                             i, n = payload[6:payload.index("]")].split("/")
@@ -221,13 +256,22 @@ class App:
 
     def _finish(self, code):
         self._set_running(False)
+        if self.logf:
+            try:
+                self.logf.write(f"\n{'=' * 72}\nEXIT {code}   ({datetime.datetime.now().isoformat(timespec='seconds')})\n")
+                self.logf.close()
+            except Exception:
+                pass
+            self.logf = None
+        log_note = f"\n\nLog saved to:\n{self.log_path}" if self.log_path else ""
         if code == 0:
             self.pbar["value"] = 100
             self.status.config(text="Done. Map converted" + (" + deployed." if self.deploy_var.get() else "."))
-            messagebox.showinfo("Finished", "Conversion complete.")
+            messagebox.showinfo("Finished", "Conversion complete." + log_note)
         else:
-            self.status.config(text=f"Failed (exit {code}). See log.")
-            messagebox.showerror("Failed", f"Conversion failed (exit {code}). Check the log for the failing step.")
+            self.status.config(text=f"Failed (exit {code}). See log: {os.path.basename(self.log_path or '')}")
+            messagebox.showerror("Failed", f"Conversion failed (exit {code}). Check the log for the failing step."
+                                 + log_note + "\n\n(Attach this log file to a GitHub issue.)")
 
     # --- ui helpers ---
     def _set_running(self, running):

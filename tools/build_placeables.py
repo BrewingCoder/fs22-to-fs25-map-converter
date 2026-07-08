@@ -23,7 +23,12 @@ CONV = json.load(open(os.path.join(WWREPO, "tools", os.environ.get("MAP_CONVERT"
 SRC = convert_env.source_dir(CONV)                                       # FS22 original (read-only source of truth)
 SRC_MAPS = os.path.dirname(os.path.join(SRC, CONV["source"]["map_i3d"].replace("/", os.sep)))   # FS22 map-data dir (map-agnostic: dirname(map_i3d); mapUS maps nest under maps/mapUS)
 FS22_DATA = os.environ.get("FS22_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 22\data")  # FS22 install $data root
-WW = os.path.join(SRC_MAPS, "placeables.xml")                     # the source map's own placeables list
+# the source map's own placeables list. WW ships "placeables.xml"; some maps (West End) ship
+# placeablesSINGLEPLAYER/MULTIPLAYER instead. Try a config override (source.placeables) then the known names.
+_PLACEABLES_CANDS = [CONV["source"].get("placeables"), "placeables.xml",
+                     "placeablesSINGLEPLAYER.xml", "placeablesMULTIPLAYER.xml"]
+WW = next((os.path.join(SRC_MAPS, c) for c in _PLACEABLES_CANDS
+           if c and os.path.exists(os.path.join(SRC_MAPS, c))), None)
 FS25P = os.path.join(os.environ.get("FS25_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 25\data"), "placeables")
 FS25_DATA = os.path.dirname(FS25P)                               # $data root
 OUT = os.path.join(WWREPO, "out", CONV["identity"]["mod"])
@@ -381,11 +386,14 @@ def main():
                 os.remove(os.path.join(d, f))                    # idempotent: clear prior generated files
         os.makedirs(d, exist_ok=True)
 
-    r = ET.parse(WW).getroot()
+    if WW is None:
+        print("[placeables] no source placeables list found (tried placeables/placeablesSINGLEPLAYER/MULTIPLAYER.xml) "
+              "- writing an EMPTY placeables.xml; set source.placeables in the config if it lives elsewhere")
+    r = ET.parse(WW).getroot() if WW else None
     lines = list(HDR)
     placed = collections.Counter(); skipped = collections.Counter(); stations = collections.Counter()
     prods = collections.Counter(); i = 0
-    for pl in r.iter("placeable"):
+    for pl in (r.iter("placeable") if r is not None else []):
         fn = pl.get("filename") or ""
         name = os.path.basename(fn)
         pos = (pl.get("position") or "0 0 0").split()

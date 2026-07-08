@@ -91,8 +91,13 @@ def build_remap(arr, rows):
     f2f = field_to_farmland(arr)
     field_olds = list(f2f.values())
     if len(set(field_olds)) != len(field_olds):
+        # FS25 numbers a field by its farmland id, so field-# parity NEEDS a 1:1 field<->farmland mapping. Some maps
+        # (e.g. West End) put several fields on ONE farmland parcel -> parity is impossible. Don't crash: SKIP the
+        # remap (keep the FS22 farmland ids as-is) and warn. The map still builds; it just won't have FS22 field-# parity.
         dup = sorted({v for v in field_olds if field_olds.count(v) > 1})
-        raise SystemExit(f"[farmland] fields share a farmland parcel {dup} - can't remap 1:1; inspect field polygons")
+        print(f"[farmland] field-# parity SKIPPED: {len(dup)} farmland parcel(s) hold >1 field {dup[:10]} "
+              f"(no 1:1 field<->farmland mapping); keeping FS22 farmland ids")
+        return {r["id"]: r["id"] for r in rows}, f2f   # identity remap = no change
     remap = {old: num for num, old in f2f.items()}
     nxt = max(f2f) + 1
     for r in sorted(rows, key=lambda r: r["id"]):
@@ -151,8 +156,11 @@ def main():
 
     print(f"{len(rows)} farmlands | {len(nb_ids)} NON-buyable -> {sorted(nb_ids)}")
     print(f"non-buyable labels: {sorted({r['comment'] for r in rows if r['id'] in nb_ids})}")
-    print(f"field-# parity: {len(f2f)} field parcels relabelled to their FS22 field numbers "
-          f"(1..{max(f2f)}); non-field parcels pushed to {max(f2f)+1}+")
+    if len(set(f2f.values())) == len(f2f):
+        print(f"field-# parity: {len(f2f)} field parcels relabelled to their FS22 field numbers "
+              f"(1..{max(f2f)}); non-field parcels pushed to {max(f2f)+1}+")
+    else:
+        print("field-# parity: skipped (fields share farmland parcels); FS22 farmland ids kept")
     print(f"rendered -> {SHOT}")
 
 

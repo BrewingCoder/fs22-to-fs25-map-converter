@@ -1,4 +1,4 @@
-# wild-west-fs25
+# FS22 to FS25 Map Converter
 
 ## What it does:
 - Converts an FS22 map to an FS25 Map, replacing FS22 game objects with similar (to a degree) FS25 objects. This doesn't "transplant" data as much as it "translates".

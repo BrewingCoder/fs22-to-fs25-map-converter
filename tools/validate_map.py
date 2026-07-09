@@ -22,7 +22,7 @@ import grle_codec, gdm_fruits_codec
 
 # validate the LIVE from-scratch build (out/<mod>, wildwest.i3d) - the one the game loads via the deploy junction.
 # (Was pointed at the DEAD src/ copy-the-map pipeline w/ cazz16x.i3d, so its PASSes were validating the wrong map.)
-_WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _CONV = json.load(open(os.path.join(_WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 MOD  = os.path.join(_WW, "out", _CONV["identity"]["mod"])
 I3D  = os.path.join(MOD, "maps", _CONV["identity"]["i3d"])

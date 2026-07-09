@@ -11,7 +11,7 @@ import numpy as np
 from PIL import Image
 import xml.etree.ElementTree as ET
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 # WW's ACTUALLY-painted types (verified >0.05% coverage) -> FS25 engine layer (config-driven, map-specific)

@@ -8,7 +8,7 @@ map; until then WW's own picture is the right background. No copying - read the 
 import os, json
 from PIL import Image
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22 = convert_env.source_dir(CONV)

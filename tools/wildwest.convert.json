@@ -149,8 +149,18 @@
       "fastFoodRestaurant.xml": "mapAS/sellingPoints/sellingStationRestaurant/sellingStationRestaurant.xml"
     },
     "skip": ["CattleGuarrdSM.xml", "FS22_FermentingSilo.xml", "WinPump.xml", "waterFillTriggers.xml",
-             "fencesResidentialLevel01Singleton.xml", "farma800_multi.xml", "liquidFlatBottomTank1630b.xml",
-             "treeNursery.xml", "pigFood.xml", "tmr.xml", "manureStation.xml", "buyfrombarn.xml", "Buy_Animal_Food.xml"]
+             "fencesResidentialLevel01Singleton.xml", "farma800_multi.xml",
+             "treeNursery.xml", "pigFood.xml", "tmr.xml", "manureStation.xml"]
+  },
+
+  "buypoints": {
+    "_note": "FS22 buyingStation placeables (BUY bulk goods into a trailer) -> native FS25 buy points (buyingStation+loadTrigger) on the sell-platform model at the exact FS22 spot. These are dropped by 'sellpoints' (that path is for sellingStations). Each 'convert' entry: name = price-screen label; fills = explicit buyable list (used when the FS22 source can't be read, e.g. base-game gasStation); add = extra fill types appended (LIME/SEEDS/DEF). Unknown-to-FS25 fills are filtered; added fills the game lacks are ignored, so DEF works only if a DEF mod is present.",
+    "out_subdir": "buypoints_fs25",
+    "convert": {
+      "Buy_Animal_Food.xml":          {"name": "Animal Food & Manure Depot", "add": ["LIME", "SEEDS"]},
+      "buyfrombarn.xml":              {"name": "Feed & Supply Store",        "add": ["LIME", "SEEDS"]},
+      "liquidFlatBottomTank1630b.xml":{"name": "Liquid Depot"}
+    }
   },
 
   "sellpoints": {

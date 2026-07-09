@@ -12,7 +12,7 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from PIL import Image
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22_I3D = os.path.join(convert_env.source_dir(CONV), CONV["source"]["map_i3d"])
@@ -67,6 +67,9 @@ def main():
         k = (round(x, 1), round(z, 1))
         if k not in seen:
             seen.add(k); fx.append((x, z, yaw))
+    if not fx:                                                    # no light fixtures matched (group-based; some maps' light
+        print("lights: 0 found (no matching light groups for this map) - skipped")   # groups differ) - skip, don't crash
+        return
     P = np.array([(x, z) for x, z, _ in fx]); YAW = [y for _, _, y in fx]
 
     root = ET.parse(OUT_I3D).getroot()

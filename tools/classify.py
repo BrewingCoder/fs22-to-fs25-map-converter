@@ -11,7 +11,7 @@ FS25; road/building/light/sign/deco -> extract-from-FS22; fence -> skip. Reports
 import os, sys, json, collections
 import xml.etree.ElementTree as ET
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22_I3D = os.path.join(convert_env.source_dir(CONV), CONV["source"]["map_i3d"])

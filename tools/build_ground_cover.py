@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(__file__)); import ww_fields
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
 import gdm_fruits_codec as gf
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 _GC = CONV.get("ground_cover", {})                       # map-specific foliage values + pasture/exclude weight-layer names

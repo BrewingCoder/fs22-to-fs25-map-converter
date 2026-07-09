@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from PIL import Image
 from scipy.spatial import cKDTree
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22_I3D = os.path.join(convert_env.source_dir(CONV), CONV["source"]["map_i3d"])
@@ -86,6 +86,9 @@ def main():
     for tg in tgs:                                          # walk ALL matching tree groups (WW: 'trees'; other maps may have several)
         walk(tg, np.eye(4), (pts, types))
     P = np.array(pts); T = np.array(types)
+    if len(pts) == 0:                                             # no trees matched (group-based; some maps' tree
+        print("trees: 0 found (no matching tree groups for this map) - skipped")   # groups differ) - skip, don't crash
+        return
 
     # 2. classify each tree's neighbourhood: single-file line (spline) vs 2D stand, via PCA linearity
     xz = P[:, [0, 2]]; tk = cKDTree(xz)

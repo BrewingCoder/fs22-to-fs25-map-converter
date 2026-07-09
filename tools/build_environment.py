@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "ven
 import grle_codec
 
 SMOKY_ENV = r"C:\repos\refmaps\SmokyMountainFarming\mapAS\config\environment.xml"
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONV = json.load(open(os.path.join(WW, "tools", "wildwest.convert.json"), encoding="utf-8"))
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 

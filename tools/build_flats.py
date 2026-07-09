@@ -43,7 +43,7 @@ def prune_to_shapes(scene, keep):
         copy_node(s)                                             # materializes the shape copy + its full ancestor chain
     return tops
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22 = convert_env.source_dir(CONV)
@@ -51,7 +51,8 @@ FS22_I3D = os.path.join(FS22, CONV["source"]["map_i3d"])
 FS22_MAPS = os.path.dirname(FS22_I3D)                             # FS22 map-data dir (map-agnostic; mapUS maps nest under maps/mapUS)
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 OUT_I3D = os.path.join(OUT, "maps", CONV["identity"]["i3d"])
-OUT_SHAPES = os.path.join(OUT, "maps", "wildwest.i3d.shapes")
+SHAPES_NAME = os.path.splitext(CONV["identity"]["i3d"])[0] + ".i3d.shapes"   # map-agnostic: <mapname>.i3d.shapes (GIANTS convention)
+OUT_SHAPES = os.path.join(OUT, "maps", SHAPES_NAME)
 CACHE = os.environ.get("FS_CONVERT_CACHE", os.path.join(os.path.expanduser("~"), ".fs_convert_cache",
         f"flats_ents_{CONV['identity']['mod']}.pkl"))   # PER-MAP (was shared -> WW/West End clobbered each other's mesh cache)
 # ROAD collision (GE "ROAD" preset from Smoky): FS25 uses collisionFilterGroup/Mask as HEX strings, NOT the FS22
@@ -165,7 +166,7 @@ def main():
     sh0 = root.find("Shapes")
     if sh0 is not None:
         root.remove(sh0)
-    root.insert(list(root).index(omats) + 1, ET.Element("Shapes", {"externalShapesFile": "wildwest.i3d.shapes"}))
+    root.insert(list(root).index(omats) + 1, ET.Element("Shapes", {"externalShapesFile": SHAPES_NAME}))
     nextf = max(int(f.get("fileId")) for f in ofiles) + 1
     have = {m.get("materialId") for m in omats}; fmap = {}; copied = 0
     decal_mids = set(); line_mids = set(); decal_shader_fid = None   # overlays get decal shader; lines render above wear

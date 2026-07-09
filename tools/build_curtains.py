@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
 import shapes_codec as sc
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22_I3D = os.path.join(convert_env.source_dir(CONV), CONV["source"]["map_i3d"])
@@ -21,7 +21,7 @@ FS22_DATA = os.environ.get("FS22_DATA", r"C:\Program Files (x86)\Steam\steamapps
 FS22_MAPS = os.path.dirname(FS22_I3D)
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 OUT_I3D = os.path.join(OUT, "maps", CONV["identity"]["i3d"])
-OUT_SHAPES = os.path.join(OUT, "maps", "wildwest.i3d.shapes")
+OUT_SHAPES = os.path.join(OUT, "maps", os.path.splitext(CONV["identity"]["i3d"])[0] + ".i3d.shapes")   # map-agnostic
 CACHE = os.environ.get("FS_CONVERT_CACHE", os.path.join(os.path.expanduser("~"), ".fs_convert_cache", "flats_ents.pkl"))
 GROUPS = tuple(CONV["scene_groups"].get("curtain", ["horizone"]))   # WW's backdrop group(s), map-specific (from config)
 

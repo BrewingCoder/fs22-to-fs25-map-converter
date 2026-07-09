@@ -10,16 +10,54 @@ import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.dirname(__file__))
 import ww_fields
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22 = convert_env.source_dir(CONV)
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 I3D = CONV["identity"]["i3d"]
+MAP_M = CONV.get("cfg", {}).get("map_m", 8192)
 
 
 def fmt(v):
     return " ".join(f"{x:.6g}" for x in v)
+
+
+def owned_field_nums(fields):
+    """Field numbers whose parcel is defaultFarmProperty (owned by the player at game start). FS25 auto-populates only
+    NPC/contract fields; the player's OWN fields are NOT auto-initialised and sit as raw terrain unless fields.xml gives
+    them a <ground> state (verified: base mapUS config/fields.xml ships PLOWED/HARVEST_READY entries for exactly its 4
+    starter fields, and nothing for NPC fields). We find the owned fields by majority-sampling the GENERATED farmland
+    grid under each polygon (robust to the field-#/farmland-id parity remap being skipped on some maps)."""
+    fx = os.path.join(OUT, "maps", "farmlands.xml")
+    grid = os.path.join(OUT, "maps", "data", "infoLayer_farmland.grle")
+    if not (os.path.exists(fx) and os.path.exists(grid)):
+        return []
+    import re
+    default_ids = {int(m.group(1)) for m in re.finditer(
+        r'<farmland id="(\d+)"[^/]*defaultFarmProperty="true"', open(fx, encoding="utf-8").read())}
+    if not default_ids:
+        return []
+    import numpy as np
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")); import grle_codec
+    from shapely.geometry import Polygon, Point
+    arr = np.asarray(grle_codec.decode(open(grid, "rb").read())[0]); N = arr.shape[0]
+    def px(w): return min(max(int((w + MAP_M / 2) / MAP_M * N), 0), N - 1)
+    owned = []
+    for f in fields:
+        poly = Polygon(f["polygon"]); minx, minz, maxx, maxz = poly.bounds
+        votes = {}
+        for wx in np.linspace(minx, maxx, 9):
+            for wz in np.linspace(minz, maxz, 9):
+                if poly.contains(Point(wx, wz)):
+                    v = int(arr[px(wz), px(wx)])
+                    if v > 0:
+                        votes[v] = votes.get(v, 0) + 1
+        if not votes:
+            cx, cz = poly.centroid.coords[0]; votes = {int(arr[px(cz), px(cx)]): 1}
+        if max(votes, key=votes.get) in default_ids:
+            owned.append(f["num"])
+    return owned
 
 
 def main():
@@ -80,15 +118,25 @@ def main():
             ET.SubElement(fua, "Attribute", {"name": nm, "type": ty, "value": val})
     tree.write(i3d_path, encoding="utf-8", xml_declaration=True)
 
-    # fields.xml - BLANK (namespaced shell only), hard-coded. A BLANK fields.xml lets FS25 populate EVERY field
-    # from its polygon (default crops) and makes them all contract-eligible. Per-field <ground>/<fruit> entries
-    # SUPPRESS that: with them, only ~2/10 fields got crops+contracts (user-verified). Change this ONLY if we
-    # deliberately need to pin per-field state later.
+    # fields.xml - entries for the OWNED (defaultFarmProperty) fields ONLY. FS25 auto-populates NPC/contract fields
+    # from their polygon (default crops + contracts) when they're ABSENT here, so we leave those out. But it does NOT
+    # auto-initialise the player's OWN fields - without an explicit <ground> state they sit as un-workable raw terrain
+    # (the exact symptom on WW's starter fields 7 & 11). So we lay each owned field out as a PLOWED, empty, ready-to-
+    # plant field - identical to base mapUS config/fields.xml (which ships PLOWED/HARVEST_READY entries for just its 4
+    # starter fields). fieldId = the field number (== creation order == farmland/PDA id on parity maps like WW).
+    owned = owned_field_nums(fields)
+    entries = "".join(
+        f'        <field fieldId="{num}" weedState="0" plowLevel="1">\n'
+        f'            <fruit type="UNKNOWN" />\n'
+        f'            <ground type="PLOWED" angle="0" />\n'
+        f'            <spray type="NONE" level="0" />\n'
+        f'        </field>\n' for num in owned)
     open(os.path.join(OUT, "maps", "fields.xml"), "w", encoding="utf-8").write(
         '<?xml version="1.0" encoding="utf-8" standalone="no" ?>\n'
         '<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         'xsi:noNamespaceSchemaLocation="../../../../shared/xml/schema/fields.xsd">\n'
         '    <fields>\n'
+        f'{entries}'
         '    </fields>\n'
         '</map>\n')
 
@@ -98,7 +146,8 @@ def main():
     mx.write(mx_path, encoding="utf-8", xml_declaration=True)
 
     print(f"fields: {len(fields)} generated (polygonPoints + nameIndicator + teleportIndicator@centre + "
-          f"FieldUtil.onCreate + per-field UA + fields.xml BLANK)")
+          f"FieldUtil.onCreate + per-field UA) | fields.xml lays out {len(owned)} OWNED field(s) as PLOWED "
+          f"ready-to-plant: {owned} (NPC fields left blank -> FS25 auto-populates)")
 
 
 if __name__ == "__main__":

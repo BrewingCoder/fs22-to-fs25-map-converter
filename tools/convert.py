@@ -18,12 +18,17 @@ Order (locked with user): start -> terrain -> densities -> farmland -> fields ->
 Usage: python tools/convert.py            (run all + deploy)
 """
 import os, sys, json, shutil, subprocess
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))   # so convert_env + sibling tools import (incl. when frozen-runpy'd)
+import convert_env
 sys.path.insert(0, os.environ.get("FS25_EMPTY_MAP_TOOLS", os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")))   # engine skeleton (override per machine)
 import mapcfg, gen_i3d, gen_data, gen_configs
+_NO_WINDOW = {"creationflags": subprocess.CREATE_NO_WINDOW} if hasattr(subprocess, "CREATE_NO_WINDOW") else {}
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # repo root (portable: this file is <repo>/tools/convert.py)
+WW = convert_env.app_home()                       # writable OUTPUT base (exe folder when frozen; repo root from source)
+os.environ["FS_CONVERT_HOME"] = WW                # propagate to the per-step tool subprocesses
 MAP_CONVERT = os.environ.setdefault("MAP_CONVERT", "wildwest.convert.json")   # map-agnostic: subprocess tools inherit this
-CONV = json.load(open(os.path.join(WW, "tools", MAP_CONVERT), encoding="utf-8"))
+CONV = json.load(open(MAP_CONVERT if os.path.isabs(MAP_CONVERT)               # GUI passes an abspath; else read from the bundle
+                      else os.path.join(convert_env.bundle_tools(), MAP_CONVERT), encoding="utf-8"))
 IDN = CONV["identity"]
 OUT = os.path.join(WW, "out", IDN["mod"]); MAPS = os.path.join(OUT, "maps"); DATA = os.path.join(MAPS, "data")
 # deploy target = the FS25 folder-mods dir (in Documents, NOT the Steam install). Overridable for other machines.
@@ -34,7 +39,7 @@ CFG = mapcfg.Cfg(_c.get("map_m", 8192), _c.get("name", "WildWest16x"), _c.get("s
 
 
 def _tool(name):
-    subprocess.run([sys.executable, os.path.join(WW, "tools", name)], check=True)
+    subprocess.run(convert_env.tool_argv(name), check=True, **_NO_WINDOW)   # frozen-aware: [python, tools/name] or [exe, --run-tool, name]
 
 
 def start():

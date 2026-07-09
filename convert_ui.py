@@ -9,13 +9,26 @@ the chosen <map>.convert.json; the two install folders are per-machine (env), ne
 Run:  python convert_ui.py       (needs only Python's stdlib tkinter)
 """
 import os, sys, glob, json, threading, subprocess, queue, datetime
+
+# --- freeze-aware paths (works from source AND from a PyInstaller exe) ---
+FROZEN = getattr(sys, "frozen", False)
+APP_HOME = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))   # writable base (out/, logs/)
+TOOLS = os.path.join(sys._MEIPASS, "tools") if FROZEN else os.path.join(APP_HOME, "tools")              # bundled tool scripts/configs
+sys.path.insert(0, TOOLS)
+import convert_env
+# Frozen subprocess entry: when re-invoked as `exe --run-tool <script>`, run that tool and exit BEFORE any GUI.
+if FROZEN:
+    _rc = convert_env.dispatch(sys.argv[1:])
+    if _rc is not None:
+        sys.exit(_rc)
+
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 
-REPO = os.path.dirname(os.path.abspath(__file__))
-TOOLS = os.path.join(REPO, "tools")
+REPO = APP_HOME
 CONVERT = os.path.join(TOOLS, "convert.py")
-LOG_DIR = os.path.join(REPO, "logs")   # timestamped per-run logs (gitignored); attach to GitHub issues
+LOG_DIR = os.path.join(APP_HOME, "logs")   # timestamped per-run logs; attach to GitHub issues
+_NO_WINDOW = {"creationflags": subprocess.CREATE_NO_WINDOW} if hasattr(subprocess, "CREATE_NO_WINDOW") else {}
 
 DEF_FS22 = os.environ.get("FS22_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 22\data")
 DEF_FS25 = os.environ.get("FS25_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 25\data")
@@ -179,10 +192,11 @@ class App:
         env["FS22_MODS"] = opts["fs22_mods"]
         env["FS25_DATA"] = opts["fs25"]
         env["FS25_MODS"] = opts["mods"]
+        env["FS_CONVERT_HOME"] = APP_HOME       # writable output base (out/); subprocesses inherit it
         env["PYTHONUNBUFFERED"] = "1"
         # per-run timestamped log file (date+time) - full transcript for investigating failures / GitHub issues
         self._open_log(opts)
-        cmd = [sys.executable, CONVERT]
+        cmd = convert_env.tool_argv("convert.py")   # frozen-aware: [python, convert.py] or [exe, --run-tool, convert.py]
         if not self.deploy_var.get():
             cmd.append("--no-deploy")
         threading.Thread(target=self._worker, args=(cmd, env), daemon=True).start()
@@ -215,7 +229,7 @@ class App:
     def _worker(self, cmd, env):
         try:
             self.proc = subprocess.Popen(cmd, cwd=REPO, env=env, stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT, text=True, bufsize=1)
+                                         stderr=subprocess.STDOUT, text=True, bufsize=1, **_NO_WINDOW)
             for line in self.proc.stdout:
                 self.q.put(("log", line))
             code = self.proc.wait()

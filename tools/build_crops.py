@@ -31,7 +31,7 @@ GT_TOOLS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")   
 # 11ch/6tic .gdm HEADER template (17 bytes) for gf.encode_full - only the header/range-split is read, not pixels.
 GT_FRUITS = os.path.join(GT_TOOLS, "fruits_header_11ch6tic.gdm")
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 SRC = convert_env.source_dir(CONV)

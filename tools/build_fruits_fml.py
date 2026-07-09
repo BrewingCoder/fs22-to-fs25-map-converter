@@ -9,7 +9,7 @@ import os, sys, json
 import xml.etree.ElementTree as ET
 
 GF_XML = "$data/foliage/forestPlants/groundFoliage.xml"
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONV = json.load(open(os.path.join(WW, "tools", "wildwest.convert.json"), encoding="utf-8"))
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 I3D = os.path.join(OUT, "maps", CONV["identity"]["i3d"])

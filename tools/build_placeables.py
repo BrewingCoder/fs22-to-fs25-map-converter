@@ -17,7 +17,7 @@ Writes maps/placeables.xml (the map's default placeables). Positions from WW.
 import os, re, sys, json, math, shutil, collections, xml.etree.ElementTree as ET
 from xml.sax.saxutils import escape
 
-WWREPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WWREPO = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WWREPO, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 SRC = convert_env.source_dir(CONV)                                       # FS22 original (read-only source of truth)
@@ -84,6 +84,93 @@ NAME_OVERRIDES = {k: v for k, v in SELL.get("name_overrides", {}).items() if not
 TEMPLATE = os.path.join(FS25P, SELL.get("template",
            "mapUS/sellingPoints/grainBargeTerminal01Triggers/grainBargeTerminal01Triggers.xml").replace("/", os.sep))
 SCENE_TAGS = ("TransformGroup", "Shape", "Light", "AudioSource", "Camera")
+
+# --- BUY points: FS22 buyingStation placeables -> native FS25 buy points (config-driven) ---
+# Built on FS25's OWN generic buying station (type="buyingStation", real loadTrigger + LOADING map hotspot + in-world
+# load marker; its silo/visuals are deleted so it's a clean trigger-only base). We only swap the fill list + name.
+BUY = CONV.get("buypoints", {})
+BUY_SUBDIR = BUY.get("out_subdir", "buypoints_fs25")
+BUY_CONVERT = {k: v for k, v in BUY.get("convert", {}).items() if not k.startswith("_")}   # basename -> {name, fills, add}
+BUY_TEMPLATE = os.path.join(FS25P, BUY.get("template",
+               "brandless/limeStation/limeStation.xml").replace("/", os.sep))   # FULL (not Generic): keeps the
+               # collisions (working load trigger) + visible model; the Generic strips collisions so the load point is dead
+
+
+def ww_buy_fills(text):
+    """READ an FS22 buyingStation's buyable fill types (+ per-type buy price) from the placeable's raw TEXT via regex.
+    Regex (not ET) because WW placeable XMLs are frequently malformed (ET.parse raises) - same reason build_farmland
+    reads via regex. Filtered to fill types FS25 has. -> {FILLTYPE(upper): priceScale}."""
+    fills = {}
+    for m in re.finditer(r'loadTrigger[^>]*fillTypes="([^"]*)"', text):
+        for t in m.group(1).split():
+            n = t.upper()
+            if n and (not FS25_FILLTYPES or n in FS25_FILLTYPES):
+                fills.setdefault(n, "1")
+    for m in re.finditer(r'<fillType\s+name="([^"]*)"[^>]*priceScale="([^"]*)"', text):
+        n = m.group(1).upper()
+        if n and (not FS25_FILLTYPES or n in FS25_FILLTYPES):
+            fills[n] = m.group(2)
+    return fills
+
+
+def convert_ww_buypoint(src, stem, ww_name, add_fills, buydir):
+    """Keep the WW-NATIVE buy point: copy the FS22 placeable's own model (i3d + .shapes + textures) into the mod and
+    adapt its OWN buyingStation xml to FS25. The WW pipe stations are already type='buyingStation' with a working
+    loadTrigger + LOADING hotspot wired to their i3d, and use no custom FS22 shaders - so it converts nearly verbatim.
+    Returns the adapted xml text (or None if the model can't be found)."""
+    ww_dir = os.path.dirname(src)
+    txt = open(src, encoding="utf-8", errors="ignore").read()
+    txt = re.sub(r"<!-+.*?-+>", "", txt, flags=re.S)            # strip WW's malformed XML comments (<!----...----->)
+    m = re.search(r"<base>\s*<filename>(.*?)</filename>", txt, re.S)
+    if not m:
+        return None
+    i3d_base = os.path.basename(m.group(1).strip())
+    if not os.path.exists(os.path.join(ww_dir, i3d_base)):
+        return None
+    dst = os.path.join(buydir, stem)
+    os.makedirs(dst, exist_ok=True)
+    for f in os.listdir(ww_dir):                                 # copy the whole model tree (i3d + .shapes + textures/)
+        p = os.path.join(ww_dir, f)
+        if os.path.isdir(p):
+            shutil.copytree(p, os.path.join(dst, f), dirs_exist_ok=True)
+        elif not f.lower().endswith(".xml"):
+            shutil.copy2(p, os.path.join(dst, f))
+    # FS25 changed trigger collision from a single collisionMask to collisionFilterGroup + collisionFilterMask.
+    # Without this the loadTrigger never detects the trailer (no "load" prompt). Patch the copied i3d's TRIGGER shapes
+    # to FS25's trigger group/mask (0x20000000 / 0x40000000) - the FS22 mask 0x40000000 already IS the FS25 mask.
+    i3d_path = os.path.join(dst, i3d_base)
+    it = open(i3d_path, encoding="utf-8", errors="ignore").read()
+
+    def _fix_trigger(mm):
+        tag = mm.group(0)
+        if 'trigger="true"' in tag and "collisionMask=" in tag and "collisionFilterGroup=" not in tag:
+            tag = re.sub(r'collisionMask="[^"]*"',
+                         'collisionFilterGroup="0x20000000" collisionFilterMask="0x40000000"', tag)
+        return tag
+
+    fixed = re.sub(r"<Shape\b[^>]*/>", _fix_trigger, it)
+    if fixed != it:
+        open(i3d_path, "w", encoding="utf-8").write(fixed)
+    # fills: keep the FS22 buy list FS25 still has (+ its buy price), then append the config extras (LIME/SEEDS/...)
+    prices = {pm.group(1).upper(): pm.group(2) for pm in re.finditer(r'<fillType\s+name="([^"]*)"[^>]*priceScale="([^"]*)"', txt)}
+    lt = re.search(r'<loadTrigger\b[^>]*\bfillTypes="([^"]*)"', txt)
+    keep = [f for f in (lt.group(1).split() if lt else []) if (not FS25_FILLTYPES or f.upper() in FS25_FILLTYPES)]
+    for a in add_fills:
+        if a.upper() not in {k.upper() for k in keep}:
+            keep.append(a)
+    entries = "\n".join('        <fillType name="%s" priceScale="%s" />' % (f, prices.get(f.upper(), "1")) for f in keep)
+    # --- adapt to FS25 ---
+    txt = re.sub(r"<name>.*?</name>", lambda _: "<name>%s</name>" % escape(ww_name), txt, count=1, flags=re.S)
+    txt = re.sub(r"<image>.*?</image>", lambda _: "<image>$data/store/store_empty.png</image>", txt, count=1, flags=re.S)
+    txt = re.sub(r"(<base>\s*<filename>).*?(</filename>)",
+                 lambda mm: mm.group(1) + "maps/%s/%s/%s" % (BUY_SUBDIR, stem, i3d_base) + mm.group(2), txt, count=1, flags=re.S)
+    txt = txt.replace("<species>placeable</species>", "<species>PLACEABLE</species>")
+    txt = re.sub(r'(<loadTrigger\b[^>]*\bfillTypes=")[^"]*(")', lambda mm: mm.group(1) + " ".join(keep) + mm.group(2), txt, count=1)
+    txt = re.sub(r"(?:[ \t]*<fillType\b[^>]*/>\s*)+", lambda _: "\n" + entries + "\n    ", txt, count=1)   # swap the price block
+    # FS22 marker (markerIcons.xml + id="LOAD") -> FS25 load-marker i3d
+    txt = re.sub(r'(<triggerMarker\b[^>]*\bfilename=")[^"]*("[^>]*?)(?:\s+id="[^"]*")?(\s*/>)',
+                 lambda mm: mm.group(1) + "$data/shared/assets/marker/markerIconLoad.i3d" + mm.group(2) + mm.group(3), txt)
+    return txt
 
 # --- production points: WW productionPoint -> native FS25 productionPoint on the GENERIC production i3d, VISUAL HIDDEN ---
 PROD = CONV.get("productions", {})
@@ -377,13 +464,14 @@ def main():
                 idx[f] = os.path.relpath(os.path.join(root, f), FS25P).replace(os.sep, "/")
 
     tmpl_txt = open(TEMPLATE, encoding="utf-8").read()
+    buy_tmpl = open(BUY_TEMPLATE, encoding="utf-8").read() if os.path.exists(BUY_TEMPLATE) else None
     ux, uy, uz = unload_offset()
     outdir = os.path.join(OUT, "maps", SUBDIR)
     proddir = os.path.join(OUT, "maps", PROD_SUBDIR)
-    for d in (outdir, proddir):
+    buydir = os.path.join(OUT, "maps", BUY_SUBDIR)
+    for d in (outdir, proddir, buydir):
         if os.path.isdir(d):
-            for f in os.listdir(d):
-                os.remove(os.path.join(d, f))                    # idempotent: clear prior generated files
+            shutil.rmtree(d)                                     # idempotent: clear prior generated files (+ model subdirs)
         os.makedirs(d, exist_ok=True)
 
     if WW is None:
@@ -392,12 +480,28 @@ def main():
     r = ET.parse(WW).getroot() if WW else None
     lines = list(HDR)
     placed = collections.Counter(); skipped = collections.Counter(); stations = collections.Counter()
-    prods = collections.Counter(); i = 0
+    prods = collections.Counter(); buys = collections.Counter(); i = 0
     for pl in (r.iter("placeable") if r is not None else []):
         fn = pl.get("filename") or ""
         name = os.path.basename(fn)
         pos = (pl.get("position") or "0 0 0").split()
         src = fs22_xml(fn)
+
+        # 0) BUY POINT -> keep the WW-NATIVE buy point: copy the FS22 placeable's own pipe model + adapt its
+        #    buyingStation xml to FS25 (fill up + pay for what you take). Runs before sell/production/override.
+        if name in BUY_CONVERT and src and os.path.exists(src):
+            cfg = BUY_CONVERT[name]
+            stem = os.path.splitext(name)[0]
+            ww_name = cfg.get("name", stem)
+            txt = convert_ww_buypoint(src, stem, ww_name, cfg.get("add", []), buydir)
+            if txt:
+                ry = (net_yaw(pl.get("rotation")) + 180.0) % 360.0 - 180.0   # keep the FS22 facing (normalized)
+                open(os.path.join(buydir, stem, name), "w", encoding="utf-8").write(txt)
+                i += 1
+                lines.append(f'    <placeable filename="$mapdir$/maps/{BUY_SUBDIR}/{stem}/{name}" uniqueId="ww_{i}" '
+                             f'position="{float(pos[0]):.3f} {float(pos[1]):.3f} {float(pos[2]):.3f}" rotation="0 {ry:g} 0" farmId="0"/>')
+                buys[ww_name] += 1
+                continue
 
         # 1) SELLING STATION -> generate a native FS25 station carrying WW's name + broad categories, exact spot
         if src:
@@ -512,8 +616,11 @@ def main():
         open(mapxml, "w", encoding="utf-8").write(mx)
     print(f"storeItems.xml: {len(fns)} placeables registered + map.xml referenced")
     print(f"placeables.xml: {i} total | {sum(stations.values())} generated stations | "
+          f"{sum(buys.values())} buy points | "
           f"{sum(prods.values())} production points | "
           f"{sum(placed.values())} base-game ({len(placed)} types) | skipped {sum(skipped.values())} ({len(skipped)} types)")
+    if buys:
+        print("  buy points (buyingStation):", dict(buys))
     if prods:
         print("  production points (WW recipes, WW visual):", dict(prods))
     print(f"  unload-offset={ux:.3f} {uy:.3f} {uz:.3f}  categories='{CATS}'")

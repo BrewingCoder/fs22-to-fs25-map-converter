@@ -18,7 +18,7 @@ Idempotent. Run LAST (convert.py step "fixup"), after every mesh/material/shader
 import os, re, json, shutil
 import xml.etree.ElementTree as ET
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 MAPS = os.path.join(WW, "out", CONV["identity"]["mod"], "maps")
 I3D = os.path.join(MAPS, CONV["identity"]["i3d"])

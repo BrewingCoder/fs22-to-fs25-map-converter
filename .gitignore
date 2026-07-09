@@ -73,3 +73,11 @@ docs/VENDORING_PLAN.md
 
 # stray logs anywhere
 *.log
+
+# PyInstaller build output
+build/
+dist/
+*.spec
+
+# West End porting working notes (not part of the public converter)
+westend_port/

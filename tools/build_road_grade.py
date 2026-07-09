@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from PIL import Image
 from scipy.ndimage import distance_transform_edt
 
-WW = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 FS22 = convert_env.source_dir(CONV)

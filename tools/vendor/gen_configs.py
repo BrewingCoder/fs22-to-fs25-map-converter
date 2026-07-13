@@ -56,7 +56,7 @@ MAP_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
         <paintableFoliage layerName="decoFoliage" startChannel="0" numStateChannels="4" />
     </paintableFoliages>
     <farmlands filename="maps/farmlands.xml" />
-    <aiSystem filename="$data/maps/mapUS/config/aiSystem.xml" />
+    <aiSystem filename="maps/config/aiSystem.xml" />
     <npcs filename="$data/maps/maps_npcs.xml" />
     <missions vehicleFilename="$dataS/missionVehicles.xml" />
 </map>
@@ -91,6 +91,15 @@ FIELDGROUND_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 </fieldGround>
 '''
 
+# Map-local aiSystem (AI helper slope/height limits). Identical to base mapUS's - shipped local only for self-
+# containment (proper maps do; AI routing itself uses the navigation-collision layer, not this file).
+AISYSTEM_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<aiSystem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../shared/xml/schema/aiSystem.xsd">
+    <maxSlopeAngle>20</maxSlopeAngle>
+    <vehicleMaxHeight>5</vehicleMaxHeight>
+</aiSystem>
+'''
+
 MODDESC = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="{descVersion}">
     <author>fs25-empty-map</author>
@@ -120,6 +129,7 @@ def build(cfg, mod_dir, maps_dir, desc_version="100"):
     # map-local field-ground level maps (referenced by map.xml <fieldGround>). See fs25-empty-map#1.
     os.makedirs(os.path.join(maps_dir, "config"), exist_ok=True)
     _w(os.path.join(maps_dir, "config", "fieldGround.xml"), FIELDGROUND_XML)
+    _w(os.path.join(maps_dir, "config", "aiSystem.xml"), AISYSTEM_XML)
     for name, root in (("vehicles", "vehicles"), ("placeables", "placeables"), ("items", "items")):
         _w(os.path.join(maps_dir, name + ".xml"),
            f'<?xml version="1.0" encoding="utf-8" standalone="no" ?>\n<{root}></{root}>\n')

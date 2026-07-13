@@ -55,6 +55,7 @@ def densities():
 
 STEPS = [("start", start), ("terrain", lambda: _tool("build_terrain.py")), ("densities", densities),
          ("farmland", lambda: _tool("build_farmland.py")), ("fields", lambda: _tool("build_fields.py")),
+         ("field_fertility", lambda: _tool("build_field_fertility.py")), # fertilize+lime NPC crop fields (sprayLevel/limeLevel) so harvest contracts reach getMaxCutLiters (proper maps ship fields pre-fertilized)
          ("ground_texture", lambda: _tool("build_ground_texture.py")),   # 2a terrain paint
          ("ground_cover", lambda: _tool("build_ground_cover.py")),       # 2b grass+meadowUS foliage (off roads/fields)
          ("flats", lambda: _tool("build_flats.py")),                     # 2c roads/Bridges/tunnels + collision + decals
@@ -66,6 +67,7 @@ STEPS = [("start", start), ("terrain", lambda: _tool("build_terrain.py")), ("den
 
          ("lights", lambda: _tool("build_lights.py")),                   # 5 WW light fixtures -> base-game FS25 "Street Light" i3d references (native mesh+light; no FS22 extraction)
          ("trees", lambda: _tool("build_trees.py")),                     # 3 base-game FS25 trees at WW positions (deciduous near roads)
+         ("field_entrances", lambda: _tool("build_field_entrances.py")), # F1 per-field access lane (dirt track road->meadow + foliage/tree/pole clearance); consumes scan_field_entrances plan
          ("water", lambda: _tool("build_water.py")),                     # 6 FS25-native oceanShader plane at the water level (terrain clips to basins); no FS22 assets
          ("shop", lambda: _tool("build_shop.py")),                       # 7 port WW's functional vehicle shop (spawn places + trigger + onCreate UAs) into gameplay
          ("fixup", lambda: _tool("fix_i3d_refs.py")),                     # FINAL integrity gate: strip dangling material->file refs (WW id-reuse) that crash the loader
@@ -84,7 +86,10 @@ if __name__ == "__main__":
     pos = [a for a in sys.argv[1:] if not a.startswith("--")]     # step-count arg, ignoring flags
     no_deploy = "--no-deploy" in sys.argv
     n = int(pos[0]) if pos else len(STEPS)
+    skip = {s.strip() for s in os.environ.get("SKIP_STEPS", "").split(",") if s.strip()}   # isolation: SKIP_STEPS=buildings,curtains
     for i, (name, fn) in enumerate(STEPS[:n], 1):
+        if name in skip:
+            print(f"[STEP {i}/{n}] {name} -- SKIPPED (SKIP_STEPS)", flush=True); continue
         print(f"[STEP {i}/{n}] {name}", flush=True)               # progress marker (the UI parses this)
         fn()
     if not no_deploy:

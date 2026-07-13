@@ -31,7 +31,12 @@ class Cfg:
         self.il_res = {"indoorMask": d, "tipCollision": d, "tipCollisionGenerated": d,
                        "navigationCollision": d // 2,
                        "placementCollision": d // 4, "placementCollisionGenerated": d // 4,
-                       "farmland": d // 4, "fieldType": d // 4}
+                       "farmland": d // 4, "fieldType": d // 4,
+                       # field-work LEVEL maps (fertilizer/lime/plow/roller/stubble). Same res as fieldType.
+                       # Required for spray/fertilize contracts + the fertilizer harvest bonus to work; without
+                       # our own, map.xml falls back to mapUS's mismatched level maps. See fs25-empty-map#1.
+                       "sprayLevel": d // 4, "limeLevel": d // 4, "plowLevel": d // 4,
+                       "stubbleShredLevel": d // 4, "rollerLevel": d // 4}
 
 
 CFG16 = Cfg(8192, "Empty16x", "16x")

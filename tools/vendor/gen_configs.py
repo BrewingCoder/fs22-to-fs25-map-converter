@@ -12,7 +12,7 @@ MAP_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
     <sounds filename="$data/maps/mapUS/sounds/sounds.xml" />
     <environment filename="$data/maps/mapUS/config/environment.xml" />
     <weed filename="$data/maps/mapUS/config/weed.xml" />
-    <fieldGround filename="$data/maps/mapUS/config/fieldGround.xml" />
+    <fieldGround filename="maps/config/fieldGround.xml" />
     <!-- Register MEADOW as a growable/mowable fruit ON TOP of the auto-loaded stock list. The game reads ONLY THE
          FIRST <fruitTypes> element in map.xml: shipping an explicit stock-list element first (as we did until
          2026-07-06) makes the game IGNORE this block entirely - the log then shows the 25 stock fruits load and
@@ -71,6 +71,26 @@ FARMLANDS_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 </map>
 '''
 
+# Map-LOCAL field-ground level maps. Base-game maps ship this per map; borrowing $data/maps/mapUS/config/fieldGround.xml
+# makes fertilizer/lime/plow LEVELS run on mapUS's mismatched maps -> spray/fertilize contracts stuck at 0%, no
+# fertilizer harvest bonus. Replicates mapUS's config with filenames pointing at OUR blank level .grle's (gen_data).
+# Channel counts MUST match gen_data. See fs25-empty-map#1.
+FIELDGROUND_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<fieldGround>
+    <densityMaps>
+        <sprayLevel filename="maps/data/infoLayer_sprayLevel.grle" firstChannel="0" numChannels="2" maxValue="2"/>
+        <limeLevel filename="maps/data/infoLayer_limeLevel.grle" firstChannel="0" numChannels="2" />
+        <plowLevel filename="maps/data/infoLayer_plowLevel.grle" firstChannel="0" numChannels="1" />
+        <stubbleShredLevel filename="maps/data/infoLayer_stubbleShredLevel.grle" firstChannel="0" numChannels="1" />
+        <rollerLevel filename="maps/data/infoLayer_rollerLevel.grle" firstChannel="0" numChannels="1" />
+        <fieldType filename="maps/data/infoLayer_fieldType.grle" firstChannel="0" numChannels="1">
+            <default value="0" />
+            <rice value="1" />
+        </fieldType>
+    </densityMaps>
+</fieldGround>
+'''
+
 MODDESC = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="{descVersion}">
     <author>fs25-empty-map</author>
@@ -97,6 +117,9 @@ def build(cfg, mod_dir, maps_dir, desc_version="100"):
     # overview = the static map picture the game displays and overlays fields onto (must be map-sized). Empty grass.
     Image.new("RGB", (cfg.overview_res, cfg.overview_res), (72, 88, 48)).save(os.path.join(maps_dir, "overview.png"))
     _w(os.path.join(maps_dir, "farmlands.xml"), FARMLANDS_XML)
+    # map-local field-ground level maps (referenced by map.xml <fieldGround>). See fs25-empty-map#1.
+    os.makedirs(os.path.join(maps_dir, "config"), exist_ok=True)
+    _w(os.path.join(maps_dir, "config", "fieldGround.xml"), FIELDGROUND_XML)
     for name, root in (("vehicles", "vehicles"), ("placeables", "placeables"), ("items", "items")):
         _w(os.path.join(maps_dir, name + ".xml"),
            f'<?xml version="1.0" encoding="utf-8" standalone="no" ?>\n<{root}></{root}>\n')

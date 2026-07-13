@@ -54,6 +54,7 @@ def densities():
 
 
 STEPS = [("start", start), ("terrain", lambda: _tool("build_terrain.py")), ("densities", densities),
+         ("environment", lambda: _tool("build_environment.py")),          # local env config + infoLayer_environment (Smoky-tuned haze look); else map.xml borrows mapUS's mismatched env
          ("farmland", lambda: _tool("build_farmland.py")), ("fields", lambda: _tool("build_fields.py")),
          ("field_fertility", lambda: _tool("build_field_fertility.py")), # fertilize+lime NPC crop fields (sprayLevel/limeLevel) so harvest contracts reach getMaxCutLiters (proper maps ship fields pre-fertilized)
          ("ground_texture", lambda: _tool("build_ground_texture.py")),   # 2a terrain paint

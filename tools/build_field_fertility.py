@@ -30,7 +30,8 @@ MAP = float(CONV.get("cfg", {}).get("map_m", 8192))
 
 _FF = CONV.get("field_fertility", {})
 SPRAY_LEVEL = int(_FF.get("spray_level", 2))    # 2 = 100% fertilized (sprayLevel maxValue=2)
-LIME_LEVEL = int(_FF.get("lime_level", 2))      # limed (limeLevel is 2-channel, 0..3)
+LIME_LEVEL = int(_FF.get("lime_level", 3))      # FULL lime (limeLevel is 2-channel, 0..3; lime is threshold-like -
+                                                # only near-full gives the +15% harvestLimeScaleRatio bonus)
 ENABLED = bool(_FF.get("enabled", True))
 
 

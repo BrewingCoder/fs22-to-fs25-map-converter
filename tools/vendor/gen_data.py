@@ -54,11 +54,11 @@ def build(cfg, data_dir):
         binfmt.blank_grle(P(f"infoLayer_{nm}.grle"), R[nm])
 
     # field-work LEVEL maps - blank (value 0 = un-fertilized/limed/plowed on a fresh map). Referenced by our
-    # map-local config/fieldGround.xml (gen_configs). Channel counts MUST match fieldGround.xml: spray/lime
-    # levels = 2 channels (0/1/2 = 0%/50%/100%), plow/stubble/roller = 1 channel. Missing these = spray/fertilize
-    # contracts stuck at 0% + no fertilizer harvest bonus (map falls back to mapUS's level maps). fs25-empty-map#1.
-    for nm, ch in (("sprayLevel", 2), ("limeLevel", 2), ("plowLevel", 1),
-                   ("stubbleShredLevel", 1), ("rollerLevel", 1)):
-        binfmt.blank_grle(P(f"infoLayer_{nm}.grle"), R[nm], ch)
+    # map-local config/fieldGround.xml (gen_configs). ALL are single-plane .grle (image_channels=1, like base
+    # mapUS) - the density-map BIT width (spray/lime level = 2 bits = 0/50/100%, plow/stubble/roller = 1) lives
+    # in fieldGround.xml's numChannels, NOT the grle image channels. Missing these = spray/fertilize contracts
+    # stuck at 0% + no fertilizer harvest bonus (map falls back to mapUS's level maps). fs25-empty-map#1.
+    for nm in ("sprayLevel", "limeLevel", "plowLevel", "stubbleShredLevel", "rollerLevel"):
+        binfmt.blank_grle(P(f"infoLayer_{nm}.grle"), R[nm])
 
     print(f"gen_data: {cfg.title} - DEM {cfg.dem_res}^2, densities {N}^2, 100ha wheat field -> {data_dir}")

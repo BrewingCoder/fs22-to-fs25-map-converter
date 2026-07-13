@@ -78,12 +78,12 @@ FARMLANDS_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 FIELDGROUND_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <fieldGround>
     <densityMaps>
-        <sprayLevel filename="maps/data/infoLayer_sprayLevel.grle" firstChannel="0" numChannels="2" maxValue="2"/>
-        <limeLevel filename="maps/data/infoLayer_limeLevel.grle" firstChannel="0" numChannels="2" />
-        <plowLevel filename="maps/data/infoLayer_plowLevel.grle" firstChannel="0" numChannels="1" />
-        <stubbleShredLevel filename="maps/data/infoLayer_stubbleShredLevel.grle" firstChannel="0" numChannels="1" />
-        <rollerLevel filename="maps/data/infoLayer_rollerLevel.grle" firstChannel="0" numChannels="1" />
-        <fieldType filename="maps/data/infoLayer_fieldType.grle" firstChannel="0" numChannels="1">
+        <sprayLevel filename="maps/data/infoLayer_sprayLevel.png" firstChannel="0" numChannels="2" maxValue="2"/>
+        <limeLevel filename="maps/data/infoLayer_limeLevel.png" firstChannel="0" numChannels="2" />
+        <plowLevel filename="maps/data/infoLayer_plowLevel.png" firstChannel="0" numChannels="1" />
+        <stubbleShredLevel filename="maps/data/infoLayer_stubbleShredLevel.png" firstChannel="0" numChannels="1" />
+        <rollerLevel filename="maps/data/infoLayer_rollerLevel.png" firstChannel="0" numChannels="1" />
+        <fieldType filename="maps/data/infoLayer_fieldType.png" firstChannel="0" numChannels="1">
             <default value="0" />
             <rice value="1" />
         </fieldType>

@@ -1,5 +1,6 @@
 """
-build_field_fertility.py - paint the field-work LEVEL maps so NPC/AI crop fields spawn FERTILIZED + LIMED.
+build_field_fertility.py - paint the field-work LEVEL maps so NPC/AI crop fields spawn in a fully WORKED state:
+FERTILIZED (sprayLevel) + LIMED (limeLevel) + PLOWED (plowLevel) - matching proper workshop maps (Huron).
 
 WHY: FS25 harvest contracts size their required delivery from `getMaxCutLiters` = the field's FULLY fertilized +
 limed MAX yield (fertilizer +45% `harvestSprayScaleRatio`, lime +15% `harvestLimeScaleRatio`). Proper workshop maps
@@ -30,8 +31,9 @@ MAP = float(CONV.get("cfg", {}).get("map_m", 8192))
 
 _FF = CONV.get("field_fertility", {})
 SPRAY_LEVEL = int(_FF.get("spray_level", 2))    # 2 = 100% fertilized (sprayLevel maxValue=2)
-LIME_LEVEL = int(_FF.get("lime_level", 3))      # FULL lime (limeLevel is 2-channel, 0..3; lime is threshold-like -
-                                                # only near-full gives the +15% harvestLimeScaleRatio bonus)
+LIME_LEVEL = int(_FF.get("lime_level", 3))      # FULL lime (limeLevel is 2-channel, 0..3)
+PLOW_LEVEL = int(_FF.get("plow_level", 1))      # plowed (plowLevel 1-channel, 0/1). Huron ships fields plowed (86%);
+                                                # a proper map's fields are WORKED. Unplowed = yield penalty vs getMaxCutLiters.
 ENABLED = bool(_FF.get("enabled", True))
 
 
@@ -62,22 +64,23 @@ def field_mask(n):
 
 
 def main():
-    spray_p = os.path.join(DATA, "infoLayer_sprayLevel.grle")
-    lime_p = os.path.join(DATA, "infoLayer_limeLevel.grle")
-    if not (os.path.exists(spray_p) and os.path.exists(lime_p)):
+    layers = [("infoLayer_sprayLevel.grle", SPRAY_LEVEL), ("infoLayer_limeLevel.grle", LIME_LEVEL),
+              ("infoLayer_plowLevel.grle", PLOW_LEVEL)]
+    paths = [os.path.join(DATA, nm) for nm, _ in layers]
+    if not all(os.path.exists(p) for p in paths):
         raise SystemExit("[field_fertility] level grles missing - run 'start' (gen_data) first")
     if not ENABLED:
-        print("[field_fertility] disabled via config; leaving fields un-fertilized")
+        print("[field_fertility] disabled via config; leaving fields un-worked")
         return
-    n = _grle_res(spray_p)
+    n = _grle_res(paths[0])
     mask, nfilled, ntot = field_mask(n)
-    for path, val, label in ((spray_p, SPRAY_LEVEL, "spray"), (lime_p, LIME_LEVEL, "lime")):
+    for path, val in zip(paths, (SPRAY_LEVEL, LIME_LEVEL, PLOW_LEVEL)):
         arr = np.zeros((n, n), np.uint8)
         arr[mask] = val
         binfmt.paint_grle(path, arr)          # single-plane grle (image_channels=1), matches gen_data
     pct = 100.0 * mask.sum() / mask.size
-    print(f"[field_fertility] painted {nfilled}/{ntot} fields ({pct:.1f}% of map) -> sprayLevel={SPRAY_LEVEL} "
-          f"limeLevel={LIME_LEVEL} @ {n}^2. Harvest contracts now reach getMaxCutLiters.")
+    print(f"[field_fertility] worked {nfilled}/{ntot} fields ({pct:.1f}% of map) -> sprayLevel={SPRAY_LEVEL} "
+          f"limeLevel={LIME_LEVEL} plowLevel={PLOW_LEVEL} @ {n}^2. Harvest contracts now reach getMaxCutLiters.")
 
 
 if __name__ == "__main__":

@@ -60,5 +60,8 @@ def build(cfg, data_dir):
     # stuck at 0% + no fertilizer harvest bonus (map falls back to mapUS's level maps). fs25-empty-map#1.
     for nm in ("sprayLevel", "limeLevel", "plowLevel", "stubbleShredLevel", "rollerLevel"):
         binfmt.blank_grle(P(f"infoLayer_{nm}.grle"), R[nm])
+    # field weed blocking-state layer (blank = weeds not blocked; the weed system only grows them on cultivated
+    # ground anyway). Referenced by our map-local weed.xml (gen_configs) instead of borrowing mapUS's.
+    binfmt.blank_grle(P("infoLayer_weed.grle"), R["weed"])
 
     print(f"gen_data: {cfg.title} - DEM {cfg.dem_res}^2, densities {N}^2, 100ha wheat field -> {data_dir}")

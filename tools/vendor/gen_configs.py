@@ -11,7 +11,7 @@ MAP_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
     <filename>maps/{i3d}</filename>
     <sounds filename="$data/maps/mapUS/sounds/sounds.xml" />
     <environment filename="$data/maps/mapUS/config/environment.xml" />
-    <weed filename="$data/maps/mapUS/config/weed.xml" />
+    <weed filename="maps/config/weed.xml" />
     <fieldGround filename="maps/config/fieldGround.xml" />
     <!-- Register MEADOW as a growable/mowable fruit ON TOP of the auto-loaded stock list. The game reads ONLY THE
          FIRST <fruitTypes> element in map.xml: shipping an explicit stock-list element first (as we did until
@@ -91,6 +91,18 @@ FIELDGROUND_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
 </fieldGround>
 '''
 
+# Map-local field-weed system (crop weeds/herbicide). Just the weed blocking-state infoLayer, pointed at OUR blank
+# infoLayer_weed (gen_data) instead of borrowing mapUS's map-sized one. .png ext resolves to .grle.
+WEED_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<map xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../shared/xml/schema/weed.xsd">
+    <weed>
+        <infoLayer filename="maps/data/infoLayer_weed.png" firstChannel="0" numChannels="1">
+            <blockingState value="1" firstChannel="0" numChannels="1" />
+        </infoLayer>
+    </weed>
+</map>
+'''
+
 # Map-local aiSystem (AI helper slope/height limits). Identical to base mapUS's - shipped local only for self-
 # containment (proper maps do; AI routing itself uses the navigation-collision layer, not this file).
 AISYSTEM_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
@@ -130,6 +142,7 @@ def build(cfg, mod_dir, maps_dir, desc_version="100"):
     os.makedirs(os.path.join(maps_dir, "config"), exist_ok=True)
     _w(os.path.join(maps_dir, "config", "fieldGround.xml"), FIELDGROUND_XML)
     _w(os.path.join(maps_dir, "config", "aiSystem.xml"), AISYSTEM_XML)
+    _w(os.path.join(maps_dir, "config", "weed.xml"), WEED_XML)
     for name, root in (("vehicles", "vehicles"), ("placeables", "placeables"), ("items", "items")):
         _w(os.path.join(maps_dir, name + ".xml"),
            f'<?xml version="1.0" encoding="utf-8" standalone="no" ?>\n<{root}></{root}>\n')

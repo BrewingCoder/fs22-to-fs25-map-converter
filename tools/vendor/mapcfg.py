@@ -36,7 +36,9 @@ class Cfg:
                        # Required for spray/fertilize contracts + the fertilizer harvest bonus to work; without
                        # our own, map.xml falls back to mapUS's mismatched level maps. See fs25-empty-map#1.
                        "sprayLevel": d // 4, "limeLevel": d // 4, "plowLevel": d // 4,
-                       "stubbleShredLevel": d // 4, "rollerLevel": d // 4}
+                       "stubbleShredLevel": d // 4, "rollerLevel": d // 4,
+                       # field weed system (crop weeds / herbicide). blank = no weeds. else map.xml borrows mapUS's.
+                       "weed": d // 4}
 
 
 CFG16 = Cfg(8192, "Empty16x", "16x")

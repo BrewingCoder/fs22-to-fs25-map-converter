@@ -47,7 +47,8 @@
   "assets": {
     "_note": "Chosen base-game FS25 assets referenced per map.",
     "street_light": "$data/placeables/mapEU/brandless/lightsResidential/streetLight01/streetLight01.i3d",
-    "street_light_yaw_offset": 90.0
+    "street_light_yaw_offset": 90.0,
+    "street_light_strip_collision": true
   },
 
   "flats": {
@@ -66,7 +67,7 @@
 
   "tree_palette": {
     "_note": "Base-game FS25 tree species (US) + placement tuning. deciduous = single-file spline rows + lone; conifer = forest stands.",
-    "deciduous": ["americanElm", "oak", "aspen", "beech", "betulaErmanii", "boxelder", "northernCatalpa", "shagbarkHickory"],
+    "deciduous": ["americanElm", "oak", "aspen", "beech", "betulaErmanii", "shagbarkHickory"],
     "conifer": ["pinusSylvestris", "lodgepolePine", "pinusTabuliformis"],
     "conifer_keywords": ["pine", "spruce", "stonepine", "fir", "cedar"],
     "stages": ["stage03", "stage04", "stage05"],
@@ -103,6 +104,32 @@
   "ground_layer_map": {
     "_note": "build_ground_texture: WW FS22 weight-layer -> FS25 engine layer (WW's actually-painted subset).",
     "dirt": "mudDark", "asphaltAlpine": "asphalt", "gravelMoss": "gravelPebblesMoss", "gravelDirt": "gravel", "concrete": "concrete"
+  },
+
+  "field_entrances": {
+    "_note": "build_field_entrances (F1 BUILD): EXECUTES the plan from scan_field_entrances.py (which owns all site selection - deepest-meadow sides, rule out buildings/steep, thread the streetlight gap). For each planned entrance it lays a DUAL wheel-track from the nearest road across the meadow to the field edge (+ into_field_m in). track_layer=mudTracks = the base-game FS25 tire-track terrain texture (what WW field 10 uses via pathway->mudTracks, GT-style); its engine layer mudTracks01 ships wired to the blank weight map, so the tool gives it a dedicated weight PNG (same wiring build_ground_texture uses). two_track=true paints TWO ruts (rut_width_m wide, track_gauge_m apart) with a GRASS CROWN left between them - foliage is cleared ONLY on the ruts (not the whole corridor), so it reads as two wheel tracks, not a bare swath. TREES within clear_trees_m of the entrance mouth OR road_mouth_clear_trees_m of the road crossing OR track_clear_trees_m of ANY point on a rut are removed; a STREETLIGHT is removed only if within clear_lights_m of the crossing or light_lane_clear_m of a rut (poles are pre-threaded).",
+    "two_track": true,
+    "track_gauge_m": 1.9,
+    "rut_width_m": 0.9,
+    "track_width_m": 4.0,
+    "into_field_m": 2.0,
+    "clear_trees_m": 20.0,
+    "track_clear_trees_m": 3.5,
+    "road_mouth_clear_trees_m": 8.0,
+    "clear_lights_m": 6.0,
+    "light_lane_clear_m": 2.5,
+    "track_layer": "mudTracks",
+    "track_layer_engine": "mudTracks01",
+    "road_dilate_m": 5.0,
+    "flat_deg": 6.0,
+    "max_per_field": 2,
+    "min_entrance_sep_m": 60.0,
+    "building_clear_m": 15.0,
+    "road_reach_m": 95.0,
+    "meadow_probe_max_m": 100.0,
+    "lock_file": "field_entrances.lock.json",
+    "_lock_note": "PIN approved entrances so they never move across rebuilds. Path is relative to repo root (survives convert.py's rmtree of out/). Freeze the current plan: `python tools/scan_field_entrances.py --lock`. Thereafter every scan uses locked fields verbatim (no re-derivation, immune to terrain/road/light drift). Unlock a field by deleting its block from the file; re-freeze anytime with --lock. Delete the whole file to go back to fully-auto placement.",
+    "_scan_note": "Scan (site-selection) knobs: sides ranked by meadow DEPTH (how far the meadow apron extends off the plowable edge) - the 2 DEEPEST-meadow sides get the entrances. USER-LOCKED 2026-07-12: it is depth ONLY, not edge length and not area (area wrongly favoured long shallow sides; field 11 belongs on its short 74/84 m-deep ends, not its 26 m-deep long sides). road_reach_m = a chosen side must have a road within this (95 m lets a deep set-back apron still connect); building_clear_m/flat_deg rule out buildings/steep; up to max_per_field spots >= min_entrance_sep_m apart, each threading the streetlight gap. into_field_m kept small: the track only crosses the meadow + tree band to the plowable edge, not into the crop."
   },
 
   "productions": {
@@ -186,8 +213,25 @@
     "_note": "build_tweaks (FINAL step): per-map manual OVERRIDES applied to the generated output as the last word, so one-off corrections survive every re-run without hand-editing (convert.py clobbers the output). Each entry calls out ONE thing by name and nudges it. where=placeable (maps/placeables.xml, match by storeData name/filename/uniqueId) or i3d (map scene graph, match by node name or parent>child>leaf). action=rotate|translate|scale|delete. rotate yaw/pitch/roll + translate dx/dy/dz + scale are DELTAS/multipliers on the existing value. Matches fail-loud on 0 or >1 hits.",
     "list": [
       {"where": "placeable", "match": "Wild West Warehouse Market", "action": "rotate", "yaw": 90,
-       "_comment": "sell point faces the wrong way in FS25; rotate 90deg."}
+       "_comment": "sell point faces the wrong way in FS25; rotate 90deg."},
+      {"where": "i3d_shape", "group": "WW_roads", "shape_id": 489, "action": "translate", "local": true, "dz": 0.002,
+       "_comment": "#3: the us_cross road-surface tile (shapeId 489, 'us_cross_..._tmpl') is COPLANAR with its sibling shapeId 490 at all ~248 crossings -> z-fight shimmer + edge seam. Nudge every 489 tile local Z +2mm to break the coplanarity (verified in GE on one instance). No area box = applies to every us_cross map-wide."}
     ]
+  },
+
+  "autodrive": {
+    "_note": "build_autodrive.py (separate from convert.py - a savegame add-on): generates a TWO-LANE, US right-side AutoDrive network by skeletonizing the painted road surface (road_layers) into centerlines, then emitting two one-way lanes offset lane_offset_m to the RIGHT of each travel direction, junction-stitched, DEM-heighted, into savegame<savegame>/AutoDrive_config.xml. Load the save FRESH after (AutoDrive reads on load, rewrites on save). right_hand_sign flips which side the lanes fall on (Giants +Z=south handedness -> -1 = drive-on-right; flip to +1 if they come out on the wrong side).",
+    "savegame": "savegame2",
+    "orientation": "ew",
+    "road_layers": ["asphalt", "gravelPebblesMoss", "gravel", "concrete"],
+    "lane_offset_m": 2.0,
+    "lane_edge_frac": 0.33,
+    "lane_min_offset_m": 1.2,
+    "lane_max_offset_m": 2.4,
+    "waypoint_spacing_m": 5.0,
+    "right_hand_sign": -1,
+    "junction_connect_m": 9.0,
+    "work_res": 4096
   },
 
   "rules": {

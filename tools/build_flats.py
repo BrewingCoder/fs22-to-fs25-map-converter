@@ -9,6 +9,7 @@ every shape so nothing is fallen-through. SAFE: terrain/fields don't use .shapes
 build_road_grade carves the corridors flush. flats_stage1.py caches the 2 min .shapes decode.
 """
 import os, sys, json, pickle, struct, shutil, copy
+import numpy as np
 import xml.etree.ElementTree as ET
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
 import shapes_codec as sc
@@ -109,13 +110,29 @@ def main():
     #  (b) CONTENT-DETECT (West End & any map whose roads aren't in a clean group): no group matched -> classify every
     #      shape by material/texture and keep the ones tagged "road" (asphalt/gravel/... texture), then rebuild a pruned
     #      tree preserving their placement. This finds roads scattered/mislabeled across the scene.
+    # PER-MAP flats shape filter (config `flats.only_prefixes` / `flats.skip_prefixes`, matched on Shape NAME prefix).
+    # Lets a map whittle the content-detect road set down to specific families for isolation, WITHOUT touching code or
+    # other maps. only_prefixes: None (absent) = keep all; [] = keep NONE (strip everything); [..] = keep only names
+    # starting with one of these. skip_prefixes always drops matches. Content-detect (tag-based) only; group-based maps
+    # (WW) with no `flats` config are unaffected.
+    _FLATS = CONV.get("flats", {})
+    _only = _FLATS.get("only_prefixes")
+    _skip = tuple(_FLATS.get("skip_prefixes", []))
+    def _keep(sh):
+        n = sh.get("name") or ""
+        if _only is not None and not any(n.startswith(p) for p in _only):
+            return False
+        return not (_skip and any(n.startswith(p) for p in _skip))
+
     targets = [ch for top in scene if top.get("name") in TOP for ch in top if ch.get("name") in GROUPS]
     tag_based = not targets
     if tag_based:
         tag, _ = cls.build_tagger(wr)
-        road_shapes = [sh for sh in scene.iter("Shape") if tag(sh) == "road"]
+        road_shapes = [sh for sh in scene.iter("Shape") if tag(sh) == "road" and _keep(sh)]
         emit_nodes = prune_to_shapes(scene, road_shapes)
         sel = f"classify tag=road ({len(road_shapes)} shapes, {len(emit_nodes)} top groups)"
+        if _only is not None or _skip:
+            sel += f" [filter only={_only} skip={list(_skip)}]"
     else:
         road_shapes = [sh for g in targets for sh in g.iter("Shape")]
         emit_nodes = targets
@@ -245,16 +262,68 @@ def main():
     roads_root = ET.SubElement(oscene, "TransformGroup", {"name": "WW_roads"})
     for g in emit_nodes:
         roads_root.append(g if tag_based else copy.deepcopy(g))
+    # STRIP dangling-shape nodes: content-detect can tag roadside fence/LOD shapes as "road", but their geometry lives
+    # in $data/another i3d - NOT this map's .shapes - so their shapeIds are in `missing`. Emitting them leaves dangling
+    # externalShapesFile refs that FS25 replaces with empty transform groups and then HANGS the load at 55% (West End:
+    # 964 fenceFourPlanks2m + 771 LOD0). Drop every emitted Shape whose id we couldn't extract; keep only real road mesh.
+    n_dropped = 0
+    if missing:
+        rparent = {c: p for p in roads_root.iter() for c in p}
+        for sh in list(roads_root.iter("Shape")):
+            sid = sh.get("shapeId")
+            if sid and int(sid) in missing:
+                p = rparent.get(sh)
+                if p is not None:
+                    p.remove(sh); n_dropped += 1
+    # DEDUP coincident road shapes: the FS22 source ships redundant road tiles - the SAME mesh (shapeId) at the SAME
+    # world position with the SAME material, stacked 2-3 deep (WW: 251 spots, mostly TRIPLED). Coplanar identical
+    # surfaces z-fight (shimmer) and their stacked collision makes vehicles bump/step. They resolve to the same WORLD
+    # position via DIFFERENT parent chains (e.g. '073' under group '014' + '001' under a separate identically-placed
+    # group), so we must compare WORLD transforms, not local. Keep the first of each coincident set, drop the rest.
+    if _FLATS.get("dedup_road_shapes", True):
+        def _trs(n):
+            t = [float(x) for x in (n.get("translation") or "0 0 0").split()]
+            r = [np.radians(float(x)) for x in (n.get("rotation") or "0 0 0").split()]
+            s = [float(x) for x in (n.get("scale") or "1 1 1").split()]
+            cx, cy, cz = np.cos(r); sx, sy, sz = np.sin(r)
+            Rx = np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+            Ry = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+            Rz = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+            M = np.eye(4); M[:3, :3] = (Rx @ Ry @ Rz) * np.array(s); M[:3, 3] = t
+            return M
+        seen = {}
+        def _scan(n, M0):
+            M = M0 @ _trs(n)
+            if n.tag == "Shape":
+                w = M[:3, 3]
+                key = (n.get("shapeId"), round(float(w[0]), 2), round(float(w[1]), 2), round(float(w[2]), 2), n.get("materialIds"))
+                seen.setdefault(key, []).append(n)
+            for ch in n:
+                if ch.tag in ("TransformGroup", "Shape"):
+                    _scan(ch, M)
+        _scan(roads_root, np.eye(4))
+        dparent = {c: p for p in roads_root.iter() for c in p}
+        n_dedup = 0
+        for nodes in seen.values():
+            for extra in nodes[1:]:                                 # keep nodes[0], remove the coincident twins
+                p = dparent.get(extra)
+                if p is not None:
+                    p.remove(extra); n_dedup += 1
+        if n_dedup:
+            print(f"[i3d] dedup: removed {n_dedup} coincident-duplicate road shape(s) ({len(seen)} unique surfaces kept)")
+
     # collision on road surfaces; decal overlays get NONE (asphalt beneath carries it; decal shader handles the depth)
-    n_shapes = n_decals = 0
+    road_collision = _FLATS.get("collision", True)              # per-map: set flats.collision=false to emit roads as
+    n_shapes = n_decals = 0                                     # visual-only (isolation test: is the collision the hang?)
     for sh in roads_root.iter("Shape"):
         d = (sh.get("materialIds") or "").split(",")
         if any(m in decal_mids for m in d):
             sh.set("decalLayer", "2" if any(m in line_mids for m in d) else "1")   # lines above wear; on-top, no collision
             n_decals += 1
             continue
-        for k, v in ROAD_COLLISION.items():                     # ROAD preset (Static, group/mask hex, density 1)
-            sh.set(k, v)
+        if road_collision:
+            for k, v in ROAD_COLLISION.items():                 # ROAD preset (Static, group/mask hex, density 1)
+                sh.set(k, v)
         n_shapes += 1
     nid = max((int(e.get("nodeId")) for e in root.iter() if (e.get("nodeId") or "").isdigit()), default=0) + 1
     for e in roads_root.iter():                                  # fresh unique nodeIds for all copied nodes
@@ -263,7 +332,8 @@ def main():
 
     tree.write(OUT_I3D, encoding="utf-8", xml_declaration=True)
     print(f"[i3d] +{len(have)-2} materials ({copied} tex) | {len(decal_mids)} overlay mats->decalShader, "
-          f"{n_decals} decals decalLayer=1 | {n_shapes} road shapes ROAD-collision(0x601c/0xfffffbff) via {sel}")
+          f"{n_decals} decals decalLayer=1 | {n_shapes} road shapes ROAD-collision(0x601c/0xfffffbff) via {sel}"
+          + (f" | dropped {n_dropped} dangling-shape node(s)" if n_dropped else ""))
 
 
 if __name__ == "__main__":

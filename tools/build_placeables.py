@@ -173,6 +173,18 @@ def convert_ww_buypoint(src, stem, ww_name, add_fills, buydir):
     return txt
 
 # --- production points: WW productionPoint -> native FS25 productionPoint on the GENERIC production i3d, VISUAL HIDDEN ---
+# Animal-husbandry cluster cap (prevents the West End 55%-hang from 18 overlapping decorative pig barns). Config-tunable.
+_HB = CONV.get("husbandry", {})
+HUSBANDRY_CLUSTER_M = float(_HB.get("cluster_m", 250.0))   # husbandries of one type within this radius = one cluster/yard
+HUSBANDRY_CLUSTER_CAP = int(_HB.get("cluster_cap", 2))     # keep at most this many same-type husbandries per cluster
+_HUSB_KEYS = ("animalHusbandries/", "/pigBarn", "/cowBarn", "/chickenBarn", "/horseBarn", "/sheepBarn", "/husbandry")
+
+
+def is_husbandry(fs25_path):
+    p = (fs25_path or "").lower()
+    return any(k.lower() in p for k in _HUSB_KEYS)
+
+
 PROD = CONV.get("productions", {})
 PROD_GENERIC = os.path.join(FS25P, PROD.get("generic_dir", "brandless/productionPointsGeneric").replace("/", os.sep))
 PROD_GENERIC_REL = PROD.get("generic_dir", "brandless/productionPointsGeneric")   # $data-relative
@@ -481,6 +493,7 @@ def main():
     lines = list(HDR)
     placed = collections.Counter(); skipped = collections.Counter(); stations = collections.Counter()
     prods = collections.Counter(); buys = collections.Counter(); i = 0
+    _husb_xy = {}                                            # fs25 husbandry path -> [(x,z), ...] already placed (cluster cap)
     for pl in (r.iter("placeable") if r is not None else []):
         fn = pl.get("filename") or ""
         name = os.path.basename(fn)
@@ -585,6 +598,21 @@ def main():
         fs25 = OVERRIDE.get(name) or idx.get(name)
         if not fs25:
             skipped[name] += 1; continue
+        # Functional animal HUSBANDRIES deadlock the FS25 load when too many overlap: West End ships a DECORATIVE pig
+        # farm = 18 pigBarnBig on a tight grid; mapped 1:1 to functional husbandries that = 18 overlapping animal/
+        # navigation systems -> load hung at 55%. But a FEW stacked husbandries are fine (WW has 2 pigBarnSmall at the
+        # same spot and loads). So cap same-TYPE husbandries per proximity cluster: keep up to HUSBANDRY_CLUSTER_CAP
+        # within HUSBANDRY_CLUSTER_M, drop the rest as decorative excess. WW's max is 2/cluster -> fully preserved.
+        if is_husbandry(fs25):
+            hx, hz = float(pos[0]), float(pos[2])
+            clusters = _husb_xy.setdefault(fs25, [])         # each = [center_x, center_z, count]
+            c = next((c for c in clusters if (hx - c[0]) ** 2 + (hz - c[1]) ** 2 < HUSBANDRY_CLUSTER_M ** 2), None)
+            if c is None:
+                clusters.append([hx, hz, 1])                 # new cluster (spread-out husbandry) -> keep
+            elif c[2] >= HUSBANDRY_CLUSTER_CAP:
+                skipped[name] += 1; continue                 # decorative excess in a dense cluster -> drop
+            else:
+                c[2] += 1
         rot = (pl.get("rotation") or "0 0 0").split()
         ry = rot[1] if len(rot) > 1 else "0"
         i += 1

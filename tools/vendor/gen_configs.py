@@ -58,6 +58,12 @@ MAP_XML = '''<?xml version="1.0" encoding="utf-8" standalone="no" ?>
     <farmlands filename="maps/farmlands.xml" />
     <aiSystem filename="maps/config/aiSystem.xml" />
     <npcs filename="$data/maps/maps_npcs.xml" />
+    <!-- Forestry wiring (a proper workshop map ships these; Huron does). Placed base-game trees are ALREADY choppable
+         (their shapes carry splitType), but <splitShapes> is the hook that PERSISTS cut-tree state across save/reload,
+         and <treeTypes> sets the tree-planting cap + is what the deadwood/tree-transport CONTRACTS key off. Harmless on
+         a treeless map. -->
+    <treeTypes maxNumTrees="14000" />
+    <splitShapes revision="1" />
     <missions vehicleFilename="$dataS/missionVehicles.xml" />
 </map>
 '''

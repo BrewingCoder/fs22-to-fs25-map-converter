@@ -1,45 +1,126 @@
 {
   "_comment": "MAP-AGNOSTIC TEST: convert FS22 West End (64x, by Levis) -> FS25 as WE25. Different author => different scene-group names (WestEnd/Trees/forest/gameplay, NOT WW's WildWest/roads/Buildings/trees), so the RASTER core (terrain/farmland/texture/foliage) ports via this config but the SCENE-GRAPH tools (flats/buildings/trees/lights) need per-map group-name mapping (see 'scene_groups' TODO).",
-
   "identity": {
     "name": "WestEnd64x",
     "mod": "FS25_WE25",
     "title": "WE25",
     "i3d": "westend.i3d"
   },
-
   "source": {
     "mod": "FS22_WestEnd",
     "map_i3d": "maps/mapUS/map.i3d",
     "dem": "maps/mapUS/data/map_dem.png"
   },
-
   "cfg": {
     "map_m": 16384,
     "name": "WestEnd64x",
     "size": "64x",
     "units_per_pixel": 4
   },
-
   "scene_groups": {
     "_note": "West End (Levis) - different author/names than WW. top = its 4 top groups; trees = Trees+forest. roads/buildings/lights sit inside the mixed WestEnd mega-group under unknown subgroup names -> [] = let classify.py content-detect them.",
-    "top": ["gameplay", "WestEnd", "Trees", "forest"],
+    "top": [
+      "gameplay",
+      "WestEnd",
+      "Trees",
+      "forest"
+    ],
     "roads": [],
     "bridges": [],
     "tunnels": [],
     "buildings": [],
     "lights": [],
-    "trees": ["Trees", "forest"]
+    "trees": [
+      "Trees",
+      "forest"
+    ]
   },
-
-  "material_remaps": { "_note": "TBD once West End's unshipped-texture materials are enumerated." },
-  "assets": { "street_light": "$data/placeables/mapEU/brandless/lightsResidential/streetLight01/streetLight01.i3d" },
+  "material_remaps": {
+    "_note": "TBD once West End's unshipped-texture materials are enumerated."
+  },
+  "assets": {
+    "street_light": "$data/placeables/mapEU/brandless/lightsResidential/streetLight01/streetLight01.i3d"
+  },
   "tree_palette": {
     "_note": "US palette (same as WW for now; Levis West End is US midwest). Tune per-map if needed.",
-    "deciduous": ["americanElm", "oak", "aspen", "beech", "betulaErmanii", "boxelder", "northernCatalpa", "shagbarkHickory"],
-    "conifer": ["pinusSylvestris", "lodgepolePine", "pinusTabuliformis"],
-    "stages": ["stage03", "stage04", "stage05"],
-    "linearity_threshold": 0.70,
+    "deciduous": [
+      "americanElm",
+      "oak",
+      "aspen",
+      "beech",
+      "betulaErmanii",
+      "boxelder",
+      "northernCatalpa",
+      "shagbarkHickory"
+    ],
+    "conifer": [
+      "pinusSylvestris",
+      "lodgepolePine",
+      "pinusTabuliformis"
+    ],
+    "stages": [
+      "stage03",
+      "stage04",
+      "stage05"
+    ],
+    "linearity_threshold": 0.7,
     "linearity_radius_m": 18.0
+  },
+  "field_fixups": [
+    {
+      "_note": "FS22 put multiple fields on one farmland parcel; FS25 keeps one field per farmland. merge=union these field numbers into ONE field on a new farmland (bridge_m closes headland gaps); split=each field gets its own new farmland; owned=true makes the new parcel starter-owned (defaultFarmProperty). The original shared parcel is cleared entirely. Handled by ww_fields.resolve_fields (build_fields + build_farmland)."
+    },
+    {
+      "merge": [
+        30,
+        31,
+        32
+      ],
+      "bridge_m": 45,
+      "owned": true
+    },
+    {
+      "merge": [
+        33,
+        34,
+        35
+      ],
+      "bridge_m": 45,
+      "owned": true
+    },
+    {
+      "split": [
+        39,
+        41
+      ]
+    },
+    {
+      "split": [
+        40,
+        42
+      ]
+    }
+  ],
+  "overview_source": "maps/mapUS/pda_map_H.dds",
+  "ground_layer_map": {
+    "_note": "West End (mapUS) weight-mask layer -> FS25 engine terrain layer. grass stays the engine's full base; these paint on top. dirt = the starter-farm dirt roads/yard. Keys match the *_weight.png prefixes (case-sensitive).",
+    "dirt": "mudDark",
+    "Asphalt": "asphalt",
+    "forestGround": "forestLeaves",
+    "gravelMoss": "gravelPebblesMoss",
+    "limestone": "gravel",
+    "coalRock": "rock",
+    "mountainRockDark": "rock"
+  },
+  "flats": {
+    "_note": "Per-map road-shape filter for build_flats content-detect. only_prefixes keeps only names starting with these; skip_prefixes drops matches. Absent = keep everything (WW default). ISOLATION: bringing roads back surface-only (asphalt), LODs excluded.",
+    "only_prefixes": [
+      "GravelRailway"
+    ],
+    "skip_prefixes": [
+      "GravelRailwayLOD",
+      "GravelRailway3LOD"
+    ],
+    "collision": false
   }
 }

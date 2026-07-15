@@ -64,6 +64,7 @@ STEPS = [("start", start), ("terrain", lambda: _tool("build_terrain.py")), ("den
          ("buildings", lambda: _tool("build_buildings.py")),             # 4a WW town meshes + FS22 textures (copied from the FS22 install)
          ("curtains", lambda: _tool("build_curtains.py")),               # 4c map curtain / backdrop (WW horizone: distant hills + bg mountains); no collision
          ("crops", lambda: _tool("build_crops.py")),                     # 4d WW custom FS22 crops (hemp/tobacco/...) -> FS25 foliage packages + full fruit/fill registry
+         ("pregrown_crops", lambda: _tool("build_pregrown_crops.py")),   # bake ripe FERTILIZED crops onto NPC fields (fruits+ground) so harvest contracts hit ~100% (no runtime sow -> sprayLevel=2 persists). AFTER crops: fruits gdm fully written; overwrites only field cells
          ("placeables", lambda: _tool("build_placeables.py")),           # 4b WW functional placeables -> FS25 base-game (sell/buy/production/animal). AFTER crops: sale points read the custom crop fills so they're sellable
 
          ("lights", lambda: _tool("build_lights.py")),                   # 5 WW light fixtures -> base-game FS25 "Street Light" i3d references (native mesh+light; no FS22 extraction)

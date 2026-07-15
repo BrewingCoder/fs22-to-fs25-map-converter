@@ -1,0 +1,117 @@
+{
+  "_comment": "Tallulah La 16x by Newell_Gaming - FS22->FS25 conversion (group-based, WW-style). FIRST PASS - refine after gen errors.",
+  "identity": {
+    "name": "TallulahLa16x",
+    "mod": "FS25_TallulahLa_16x",
+    "title": "Tallulah LA 16x",
+    "i3d": "tallulah.i3d"
+  },
+  "source": {
+    "mod": "FS22_TallulahLa_16X",
+    "map_i3d": "map.i3d",
+    "dem": "data/map_dem.png",
+    "height_scale": 255
+  },
+  "cfg": {
+    "map_m": 8192,
+    "name": "TallulahLa16x",
+    "size": "16x"
+  },
+  "scene_groups": {
+    "top": [
+      "roads",
+      "mapStuff",
+      "gameplay",
+      "railroads",
+      "bridgesWater",
+      "farmTrees",
+      "forest",
+      "map",
+      "SmallFarmhouse",
+      "Workshop",
+      "bridgesWater",
+      "carpenterUS",
+      "farmHouse01",
+      "gardenShed2",
+      "grainFlourMill_AREA",
+      "mapStuff",
+      "railroadStorageSilo02_AREA",
+      "railroads",
+      "residentialHouse11_PLACE",
+      "residentiallHome34_SPOT",
+      "residentiallHome35_SPOT",
+      "sawMillTrailerhouse_PLACE",
+      "sawMill_AREA"
+    ],
+    "roads": [
+      "A_Curve_30m15Right",
+      "A_Curve_30m45Left",
+      "A_Curve_50m10Left",
+      "A_Curve_50m10Right",
+      "A_Curve_50m15Right",
+      "A_Curve_50m20Left",
+      "A_Curve_50m20Right",
+      "A_Curve_50m5Left",
+      "A_Curve_50m5Right",
+      "A_Road_10m",
+      "A_Road_20m",
+      "A_Road_50m",
+      "A_T_JunctionLeft",
+      "AtoLane_T_JunctionLeft",
+      "Lane_Curve_30m10Left",
+      "Lane_Curve_30m15Right",
+      "Lane_Curve_30m20Right",
+      "RoadKit22_BB",
+      "lane_20m",
+      "roadTemplates",
+      "railroads",
+      "bridgesWater"
+    ],
+    "buildings": [
+      "SmallFarmhouse",
+      "Workshop",
+      "bridgesWater",
+      "carpenterUS",
+      "farmHouse01",
+      "gardenShed2",
+      "grainFlourMill_AREA",
+      "mapStuff",
+      "railroadStorageSilo02_AREA",
+      "railroads",
+      "residentialHouse11_PLACE",
+      "residentiallHome34_SPOT",
+      "residentiallHome35_SPOT",
+      "sawMillTrailerhouse_PLACE",
+      "sawMill_AREA",
+      "farm1",
+      "farm2",
+      "farm3",
+      "farm4",
+      "farm5",
+      "farm6",
+      "farm7",
+      "farm8",
+      "farm9",
+      "farm10",
+      "farm11",
+      "farm12",
+      "farm13"
+    ],
+    "trees": [
+      "Trees"
+    ],
+    "lights": [
+      "realLights",
+      "lights",
+      "tubeLight",
+      "linkedLights",
+      "lightNode",
+      "streetLight"
+    ]
+  },
+  "ground_layer_map": {
+    "_note": "Tallulah weight layer -> FS25 (grass stays base).",
+    "riverBed": "mudDark",
+    "gravelDirt": "gravel"
+  }
+}

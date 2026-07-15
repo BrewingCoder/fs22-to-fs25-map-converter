@@ -7,7 +7,7 @@ model's own FS25-tuned lights, without 4341 gameplay-placeable registrations (id
 overhead). We read each FS22 Light's parent-group WORLD transform for the pole base (x,z) + yaw; Y snaps to our DEM.
 Idempotent (drops prior WW_lights). No FS22 textures/meshes/Light nodes are copied anymore.
 """
-import os, sys, json, math
+import os, sys, json, math, shutil
 import numpy as np
 import xml.etree.ElementTree as ET
 from PIL import Image
@@ -27,6 +27,47 @@ TOP = tuple(_SG.get("top", ["WildWest", "WildWest2"]))
 GROUPS = tuple(_SG.get("lights", ["RoadLights", "hwyLights", "SellpointLights"]))
 MAP = float(CONV.get("cfg", {}).get("map_m", 8192))
 YAW_OFFSET = float(CONV.get("assets", {}).get("street_light_yaw_offset", 90.0))   # rotate the FS25 lamp arm over the road (+90 CCW; flip sign if it aims the wrong way)
+FS25_DATA = os.environ.get("FS25_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 25\data")
+# strip the street light's collider so big equipment doesn't snag on thousands of poles (default ON).
+# set false in convert.json to reference the stock $data model WITH collision.
+STRIP_COL = bool(CONV.get("assets", {}).get("street_light_strip_collision", True))
+
+
+def resolve_data(ref):
+    """$data/... -> absolute path in the FS25 install (else the ref unchanged)."""
+    return os.path.join(FS25_DATA, ref[len("$data/"):].replace("/", os.sep)) if ref.startswith("$data/") else ref
+
+
+def vendor_nocol_streetlight():
+    """Vendor a LOCAL copy of the base-game street light with its collision shape(s) REMOVED, so the
+    poles still render + light but don't snag equipment. Returns (map-i3d-relative File path, n_stripped).
+    Textures stay $data (resolve from the install anywhere); the external .shapes is copied beside the
+    i3d (its externalShapesFile ref is relative). Idempotent (overwrites). Falls back to the stock $data
+    ref (with collision) if the base asset isn't found."""
+    src = resolve_data(STREETLIGHT)
+    if not os.path.exists(src):
+        return STREETLIGHT, 0
+    stem = os.path.splitext(os.path.basename(src))[0]                       # streetLight01
+    rel = f"vendor/{stem}/{stem}_noCol.i3d"                                 # relative to maps/ (where the map i3d lives)
+    out_dir = os.path.join(os.path.dirname(OUT_I3D), "vendor", stem)
+    os.makedirs(out_dir, exist_ok=True)
+    tree = ET.parse(src)
+
+    def strip(elem):                                                       # remove invisible colliders (name 'col' or any Shape w/ a collisionFilterGroup)
+        n = 0
+        for ch in list(elem):
+            if ch.tag == "Shape" and ((ch.get("name") or "").lower() == "col" or ch.get("collisionFilterGroup") is not None):
+                elem.remove(ch); n += 1
+            else:
+                n += strip(ch)
+        return n
+
+    removed = strip(tree.getroot().find("Scene"))
+    tree.write(os.path.join(out_dir, f"{stem}_noCol.i3d"), encoding="iso-8859-1", xml_declaration=True)
+    shp = os.path.join(os.path.dirname(src), f"{stem}.i3d.shapes")         # externalShapesFile (relative) -> copy beside
+    if os.path.exists(shp):
+        shutil.copy2(shp, os.path.join(out_dir, f"{stem}.i3d.shapes"))
+    return rel, removed
 
 
 def trs(node):
@@ -79,17 +120,28 @@ def main():
     pz = np.clip(((P[:, 1] + MAP / 2) / MAP * (H - 1)).round().astype(int), 0, H - 1)
     Y = dem[pz, px] / 65535.0 * hs
 
+    # collision-free street light: vendor a local copy with the 'col' collider stripped so poles don't
+    # snag equipment (config assets.street_light_strip_collision, default on).
+    if STRIP_COL:
+        LIGHT_REF, ncol = vendor_nocol_streetlight()
+        if LIGHT_REF == STREETLIGHT:
+            print("lights: WARN base street-light asset not found - using $data model WITH collision (poles will snag)")
+        else:
+            print(f"lights: vendored collision-free street light (stripped {ncol} 'col' collider(s)) -> {LIGHT_REF}")
+    else:
+        LIGHT_REF = STREETLIGHT
+
     files_el = root.find("Files"); oscene = root.find("Scene")
     for g in list(oscene):
         if g.tag == "TransformGroup" and g.get("name") == "WW_lights":
             oscene.remove(g)
-    for f in list(files_el):                             # drop our prior streetLight File ref (avoid dup accumulation on rerun)
-        if f.get("filename") == STREETLIGHT:
+    for f in list(files_el):                             # drop prior street-light File ref(s) (avoid dup accumulation on rerun)
+        if f.get("filename") in (STREETLIGHT, LIGHT_REF):
             files_el.remove(f)
     nextf = max(int(f.get("fileId")) for f in files_el) + 1
     nid = max((int(e.get("nodeId")) for e in root.iter() if (e.get("nodeId") or "").isdigit()), default=0) + 1
     fileid = str(nextf)
-    ET.SubElement(files_el, "File", {"fileId": fileid, "filename": STREETLIGHT}); nextf += 1
+    ET.SubElement(files_el, "File", {"fileId": fileid, "filename": LIGHT_REF}); nextf += 1
     grp = ET.SubElement(oscene, "TransformGroup", {"name": "WW_lights", "clipDistance": "600", "nodeId": str(nid)}); nid += 1
     for i in range(len(P)):
         ET.SubElement(grp, "ReferenceNode", {"name": "streetLight01", "referenceId": fileid,

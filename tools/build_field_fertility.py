@@ -7,9 +7,11 @@ limed MAX yield (fertilizer +45% `harvestSprayScaleRatio`, lime +15% `harvestLim
 (verified on Huron County: its infoLayer_sprayLevel.png is 68% painted, values 1/2) ship their fields PRE-fertilized
 so a full harvest actually reaches getMaxCutLiters. A from-scratch/converted map generates BLANK level maps (0 spray,
 0 lime) -> fields yield only ~2/3 of getMaxCutLiters -> every harvest contract comes up ~30% short, unfixable by the
-player (you can't fertilize on a harvest-only contract). This step paints sprayLevel=2 (100%) + limeLevel=2 on every
-field's plowable area so harvest contracts are completable. Runs AFTER build_farmland (needs the level grles from
-`start` + the field polygons). Map-agnostic; uses ww_fields (the FS22 field polygons) like scan_field_entrances.
+player (you can't fertilize on a harvest-only contract). This step paints sprayLevel=2 (100%) + limeLevel=3 (full) +
+plowLevel=1 on every field's plowable area. NOTE: this alone is NOT enough - because every fruitType has
+resetsSpray=true, FS25 SOWING a bare NPC field wipes sprayLevel back to 0. build_pregrown_crops (later step) bakes the
+crops in so there's no runtime sow event and this fertilizer persists to harvest. Runs AFTER build_farmland (needs the
+level grles from `start` + the field polygons). Map-agnostic; uses ww_fields (the FS22 field polygons).
 
 Usage: python tools/build_field_fertility.py
 """

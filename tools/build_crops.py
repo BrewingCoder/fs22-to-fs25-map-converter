@@ -36,8 +36,10 @@ import convert_env
 CONV = json.load(open(os.path.join(WW, "tools", os.environ.get("MAP_CONVERT", "wildwest.convert.json")), encoding="utf-8"))
 SRC = convert_env.source_dir(CONV)
 SRC_MAPS = os.path.dirname(os.path.join(SRC, CONV["source"]["map_i3d"].replace("/", os.sep)))   # FS22 map-data dir (map-agnostic: dirname(map_i3d); mapUS maps nest under maps/mapUS)
-WW_FRUIT = os.path.join(SRC_MAPS, "maps_fruitTypes.xml")
-WW_FILL = os.path.join(SRC_MAPS, "maps_fillTypes.xml")
+# custom fruit/fill registries: read the path the FS22 map.xml declares (<fruitTypes>/<fillTypes> filename=..); many maps
+# have none (Tallulah uses base-game crops only) - the readers below tolerate a missing file and return {}.
+WW_FRUIT = convert_env.map_ref(CONV, "fruitTypes") or os.path.join(SRC_MAPS, "maps_fruitTypes.xml")
+WW_FILL = convert_env.map_ref(CONV, "fillTypes") or os.path.join(SRC_MAPS, "maps_fillTypes.xml")
 WW_FOLIAGE = os.path.join(SRC_MAPS, "foliage")
 WW_HUD = os.path.join(SRC, "hud", "fillTypes")
 FS25_DATA = os.environ.get("FS25_DATA", r"C:\Program Files (x86)\Steam\steamapps\common\Farming Simulator 25\data")
@@ -82,10 +84,14 @@ def fruit_categories_section(custom_crops):
 
 
 def ww_fruittypes():
+    if not os.path.exists(WW_FRUIT):
+        return {}                                                  # source map has no custom fruits (base-game crops only)
     return {ft.get("name"): ft for ft in ET.parse(WW_FRUIT).getroot().iter("fruitType") if ft.get("name")}
 
 
 def ww_filltypes():
+    if not os.path.exists(WW_FILL):
+        return {}                                                  # source map has no custom fills
     return {(ft.get("name") or "").upper(): ft for ft in ET.parse(WW_FILL).getroot().iter("fillType") if ft.get("name")}
 
 

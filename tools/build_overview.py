@@ -7,6 +7,7 @@ map; until then WW's own picture is the right background. No copying - read the 
 """
 import os, json
 from PIL import Image
+Image.MAX_IMAGE_PIXELS = None   # some maps ship a huge (16384^2) top-down PDA render; past PIL's decompression-bomb limit
 
 WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
@@ -16,12 +17,20 @@ OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 
 
 def main():
-    cands = ["maps/overview.dds", "maps/mapUS/overview.dds", "maps/mapUS/data/mapUS_overview.dds", "map_preview.dds"]
+    # per-map override: some maps ship a promo SPLASH as overview.dds and the real top-down map as maps/mapUS/pda_map_H.dds
+    # (West End). Set "overview_source" in the map config to point at the true top-down render; else fall through the list.
+    override = CONV.get("overview_source")
+    cands = ([override] if override else []) + [
+        "maps/overview.dds", "maps/mapUS/overview.dds", "maps/mapUS/data/mapUS_overview.dds",
+        "maps/mapUS/pda_map_H.dds", "maps/pda_map_H.dds", "map_preview.dds"]
     src = next((os.path.join(FS22, *c.split("/")) for c in cands if os.path.exists(os.path.join(FS22, *c.split("/")))), None)
     dst = os.path.join(OUT, "maps", "overview.png")
     if src is None:
         print("overview: no source found -> keeping engine placeholder"); return
-    im = Image.open(src); im.load(); im.save(dst)
+    im = Image.open(src).convert("RGBA"); im.load()
+    if max(im.size) > 4096:                                   # downscale the big PDA renders to a sane overview size
+        im = im.resize((2048, 2048), Image.LANCZOS)
+    im.save(dst)
     print(f"overview: read {os.path.basename(src)} {im.size} {im.mode} -> {dst}")
 
 

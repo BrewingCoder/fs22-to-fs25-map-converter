@@ -22,6 +22,10 @@ MAP_M = CONV.get("cfg", {}).get("map_m", 8192)
 # FS22 map-data dir = the folder the source map.i3d lives in (WW: <src>/maps ; mapUS-based maps like West End:
 # <src>/maps/mapUS). Derive it from source.map_i3d so the tool stays map-agnostic - don't hardcode "maps".
 FS22_MAPS = os.path.dirname(os.path.join(FS22, CONV["source"]["map_i3d"].replace("/", os.sep)))
+# farmlands.xml path: read it straight from the FS22 map.xml's <farmlands filename=..> (author names it anything -
+# Tallulah = xml/farmland.xml); fall back to an explicit source.farmlands override, then the conventional name.
+FARMLANDS_XML = convert_env.map_ref(CONV, "farmlands") or os.path.join(
+    FS22_MAPS, CONV.get("source", {}).get("farmlands", "farmlands.xml").replace("/", os.sep))
 OUT = os.path.join(WW, "out", CONV["identity"]["mod"])
 SHOT = os.path.join(os.path.expanduser("~"), ".fs_convert_cache", "ww_farmland_native.png")   # debug render (buyable=green/red)
 
@@ -36,7 +40,7 @@ def is_buyable(comment):
 
 def read_fs22_farmlands():
     """READ the FS22 farmlands.xml via regex (its comments are malformed -> ET can't parse it)."""
-    txt = open(os.path.join(FS22_MAPS, "farmlands.xml"), encoding="utf-8", errors="ignore").read()
+    txt = open(FARMLANDS_XML, encoding="utf-8", errors="ignore").read()
     price = (re.search(r'pricePerHa="(\d+)"', txt) or [None, "60000"])[1]
     rows = []
     for m in re.finditer(r'<farmland id="(\d+)"([^>]*)/>[ \t]*(?:<!--+<?\s*(.*?)\s*-+->)?', txt):
@@ -122,6 +126,49 @@ def main():
     rows.sort(key=lambda r: r["id"])                  # base-game farmlands.xml is id-sorted
 
     nb_ids = {r["id"] for r in rows if not is_buyable(r["comment"])}
+
+    # PER-MAP field_fixups: FS25 is one-field-per-farmland (it keeps the first field on a shared parcel, drops the rest).
+    # For each shared parcel we (1) CLEAR the original parcel entirely - grid pixels -> 0 and drop its farmlands.xml row,
+    # so no junk buyable residual overlaps the new fields - then (2) carve one fresh parcel per merged/split field, using
+    # the SAME resolver as build_fields so each parcel matches its generated field node. `owned` ops become starter
+    # (defaultFarmProperty) fields. No-op when the map defines no field_fixups.
+    fixups = CONV.get("field_fixups", [])
+    src_fields = ww_fields.read_fs22_fields(os.path.join(FS22, CONV["source"]["map_i3d"].replace("/", os.sep)))
+    new_parcels = [r for r in ww_fields.resolve_fields(src_fields, fixups) if r["new_farmland"]]
+    if new_parcels:
+        from PIL import ImageDraw
+        from shapely.geometry import Polygon
+        by = {f["num"]: f for f in src_fields}
+        N = arr.shape[0]
+        def px(w): return min(max(int((w + MAP_M / 2) / MAP_M * N), 0), N - 1)
+        # 1) find + clear every original shared parcel these fixup fields sat on
+        old_parcels = set()
+        for op in fixups:
+            for num in (op.get("merge") or []) + (op.get("split") or []):
+                if num in by:
+                    cx, cz = Polygon(by[num]["polygon"]).centroid.coords[0]
+                    v = int(arr[px(cz), px(cx)])
+                    if v > 0:
+                        old_parcels.add(v)
+        for old in old_parcels:
+            arr[arr == old] = 0
+        rows = [r for r in rows if r["id"] not in old_parcels]
+        nb_ids -= old_parcels
+        # 2) carve one fresh parcel per resolved field (owned -> starter defaultFarmProperty)
+        nid = (max((r["id"] for r in rows), default=0)) + 1
+        BUF = 24.0   # grow the owned parcel out past the field polygon so the field sits fully inside owned land
+        carved = []  # (else FS25: "Field N touches farmland '0'" where we cleared the old parcel to unowned)
+        for r in new_parcels:
+            pg = Polygon(r["polygon"]).buffer(BUF)
+            pg = max(pg.geoms, key=lambda g: g.area) if pg.geom_type == "MultiPolygon" else pg
+            mask = Image.new("L", (N, N), 0)
+            ImageDraw.Draw(mask).polygon([(px(x), px(z)) for x, z in pg.exterior.coords], fill=1)
+            arr[np.asarray(mask, dtype=bool)] = nid
+            rows.append(dict(id=nid, npc=None, price_scale="1", default_farm=bool(r.get("owned")),
+                             comment=f"field {r['num']} (fixup parcel{', OWNED' if r.get('owned') else ''})"))
+            carved.append((r["num"], nid, "owned" if r.get("owned") else "buyable")); nid += 1
+        rows.sort(key=lambda r: r["id"])
+        print(f"[farmland] field_fixups: cleared old parcels {sorted(old_parcels)} -> carved {carved}")
 
     # GENERATE FS25 farmlands.xml
     # A valid FS25 farmlands.xml needs: (1) the schema NAMESPACE on <map>; (2) <farmlands> pointing DIRECTLY at the

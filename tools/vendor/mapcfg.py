@@ -27,18 +27,22 @@ class Cfg:
         self.density_res = min(map_m * 2, 16384)
         self.overview_res = map_m                            # 8192 (1 px/m)
         self.disp_size = self.density_res                    # DisplacementLayer size = density res
-        d = self.density_res                                 # infolayer .grle resolutions (verified vs Kansas)
+        d = self.density_res                                 # infolayer .grle resolutions
+        # RESOLUTION MATCHED TO A PROPER WORKSHOP MAP (Huron County), 2026-07-14. The field-work + field/farmland
+        # rasters were previously d//4 (a "verified vs Kansas" guess) = 4096^2 on a 16x map = 2 m/cell. Huron ships
+        # them at FULL density res (16384^2 = 0.5 m/cell), farmland at d//2 (8192^2 = 1 m/cell). At d//4 our field
+        # BOUNDARIES quantize to 2 m steps, so a field's reported areaHa (which getMaxCutLiters sizes the harvest
+        # requirement from) diverges from its true crop-covered area -> harvest contracts come up short. Match Huron.
         self.il_res = {"indoorMask": d, "tipCollision": d, "tipCollisionGenerated": d,
                        "navigationCollision": d // 2,
-                       "placementCollision": d // 4, "placementCollisionGenerated": d // 4,
-                       "farmland": d // 4, "fieldType": d // 4,
-                       # field-work LEVEL maps (fertilizer/lime/plow/roller/stubble). Same res as fieldType.
-                       # Required for spray/fertilize contracts + the fertilizer harvest bonus to work; without
-                       # our own, map.xml falls back to mapUS's mismatched level maps. See fs25-empty-map#1.
-                       "sprayLevel": d // 4, "limeLevel": d // 4, "plowLevel": d // 4,
-                       "stubbleShredLevel": d // 4, "rollerLevel": d // 4,
+                       "placementCollision": d // 2, "placementCollisionGenerated": d // 4,
+                       "farmland": d // 2, "fieldType": d,
+                       # field-work LEVEL maps (fertilizer/lime/plow/roller/stubble) at FULL res like Huron.
+                       # Required for spray/fertilize contracts + the fertilizer harvest bonus. See fs25-empty-map#1.
+                       "sprayLevel": d, "limeLevel": d, "plowLevel": d,
+                       "stubbleShredLevel": d, "rollerLevel": d,
                        # field weed system (crop weeds / herbicide). blank = no weeds. else map.xml borrows mapUS's.
-                       "weed": d // 4}
+                       "weed": d}
 
 
 CFG16 = Cfg(8192, "Empty16x", "16x")

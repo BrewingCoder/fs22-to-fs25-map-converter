@@ -43,8 +43,8 @@ def owned_field_nums(fields):
     from shapely.geometry import Polygon, Point
     arr = np.asarray(grle_codec.decode(open(grid, "rb").read())[0]); N = arr.shape[0]
     def px(w): return min(max(int((w + MAP_M / 2) / MAP_M * N), 0), N - 1)
-    owned = []
-    for f in fields:
+    owned = []            # (creation_index, farmland_id) for each field on an owned parcel
+    for idx, f in enumerate(fields, 1):   # idx = 1-based position in the fields group = the id FS25 assigns the field
         poly = Polygon(f["polygon"]); minx, minz, maxx, maxz = poly.bounds
         votes = {}
         for wx in np.linspace(minx, maxx, 9):
@@ -55,14 +55,80 @@ def owned_field_nums(fields):
                         votes[v] = votes.get(v, 0) + 1
         if not votes:
             cx, cz = poly.centroid.coords[0]; votes = {int(arr[px(cz), px(cx)]): 1}
+        fid_farm = max(votes, key=votes.get)
+        if fid_farm in default_ids:
+            owned.append((idx, fid_farm))
+    # Only emit owned-field entries when each owned field sits on its OWN farmland (field-#/farmland-id parity holds).
+    # On parity-SKIP maps (West End: fields 31-35 all share farmland 81) multiple entries collide on one farmland and
+    # FS25's FieldManager rejects them ("There already exists field 'N' on farmland 'M'") then stalls at shader compile.
+    # In that case fall back to a BLANK fields.xml (owned fields just won't be pre-plowed) so the map still loads.
+    farmlands = [fl for _, fl in owned]
+    if len(set(farmlands)) != len(farmlands):
+        print(f"fields: owned-field layout SKIPPED - {len(owned)} owned field(s) share farmland parcels "
+              f"(no 1:1 parity); fields.xml left blank to avoid FieldManager conflicts")
+        return []
+    # fields.xml fieldId = the field's CREATION INDEX (1-based position in the fields group). FS25 keys fields by that
+    # index, NOT the node name or farmland id (log-verified: node 'field33' becomes 'Field 31' because it's the 31st
+    # field created). Using the wrong key silently fails to attach the <ground> state -> owned property, no workable
+    # ground ("Missing area for FieldUpdateTask"). On sequential maps (WW) index == node number so this is unchanged.
+    return sorted(idx for idx, _ in owned)
+
+
+def bake_owned_ground(fields):
+    """FS25 auto-generates workable field ground only for NPC/contract fields. The player's OWNED fields on a parity-
+    broken parcel (field-id != farmland-id, e.g. West End's merged fields 30/31 on farmlands 95/96) get the parcel +
+    label but NO cultivable ground from fields.xml alone (fields.xml's runtime <ground> gen relies on that parity). So
+    BAKE tilled ground into densityMap_ground under each owned field polygon - the same terrainDetail value gen_data
+    uses for the from-scratch starter field (GROUND_SOWN=7) - guaranteeing workable land regardless of the id mismatch.
+    Owned = the field's parcel is defaultFarmProperty (majority-sampled on the generated farmland grid). Returns #baked."""
+    fx = os.path.join(OUT, "maps", "farmlands.xml")
+    grid = os.path.join(OUT, "maps", "data", "infoLayer_farmland.grle")
+    gd = os.path.join(OUT, "maps", "data", "densityMap_ground.gdm")
+    if not all(os.path.exists(p) for p in (fx, grid, gd)):
+        return 0
+    import re, numpy as np
+    default_ids = {int(m.group(1)) for m in re.finditer(
+        r'<farmland id="(\d+)"[^/]*defaultFarmProperty="true"', open(fx, encoding="utf-8").read())}
+    if not default_ids:
+        return 0
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor"))
+    import grle_codec, gdm_codec, binfmt
+    from shapely.geometry import Polygon, Point
+    from PIL import Image, ImageDraw
+    GROUND_SOWN = 7
+    farm = np.asarray(grle_codec.decode(open(grid, "rb").read())[0]); FN = farm.shape[0]
+    def fpx(w): return min(max(int((w + MAP_M / 2) / MAP_M * FN), 0), FN - 1)
+    _g = gdm_codec.decode(open(gd, "rb").read())               # gdm_codec returns the array directly (grle returns a tuple)
+    ground = np.asarray(_g[0] if isinstance(_g, tuple) else _g).astype(np.uint16); N = ground.shape[0]
+    def gpx(w): return min(max(int((w + MAP_M / 2) / MAP_M * N), 0), N - 1)
+    baked = []
+    for f in fields:
+        poly = Polygon(f["polygon"]); minx, minz, maxx, maxz = poly.bounds
+        votes = {}
+        for wx in np.linspace(minx, maxx, 9):
+            for wz in np.linspace(minz, maxz, 9):
+                if poly.contains(Point(wx, wz)):
+                    v = int(farm[fpx(wz), fpx(wx)])
+                    if v > 0:
+                        votes[v] = votes.get(v, 0) + 1
+        if not votes:
+            cx, cz = poly.centroid.coords[0]; votes = {int(farm[fpx(cz), fpx(cx)]): 1}
         if max(votes, key=votes.get) in default_ids:
-            owned.append(f["num"])
-    return owned
+            mask = Image.new("L", (N, N), 0)
+            ImageDraw.Draw(mask).polygon([(gpx(x), gpx(z)) for x, z in poly.exterior.coords], fill=1)
+            ground[np.asarray(mask, dtype=bool)] = GROUND_SOWN
+            baked.append(f["num"])
+    if baked:
+        binfmt.paint_gdm(gd, N, ground, 11, 1, 0)
+    return baked
 
 
 def main():
     from shapely.geometry import Polygon
     fields = ww_fields.read_fs22_fields(os.path.join(FS22, CONV["source"]["map_i3d"]))
+    # per-map field_fixups: merge/split FS22 fields that share a farmland into FS25's one-field-per-farmland model
+    # (must match build_farmland, which carves the matching new parcels). No-op when the map defines no field_fixups.
+    fields = ww_fields.resolve_fields(fields, CONV.get("field_fixups", []))
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else len(fields)   # generate only the first X fields
     fields = fields[:limit]
     i3d_path = os.path.join(OUT, "maps", I3D)
@@ -145,9 +211,10 @@ def main():
     (mr.find("fields") if mr.find("fields") is not None else ET.SubElement(mr, "fields")).set("filename", "maps/fields.xml")
     mx.write(mx_path, encoding="utf-8", xml_declaration=True)
 
+    baked = bake_owned_ground(fields)   # bake tilled ground into densityMap_ground for owned fields (FS25 won't for them)
     print(f"fields: {len(fields)} generated (polygonPoints + nameIndicator + teleportIndicator@centre + "
           f"FieldUtil.onCreate + per-field UA) | fields.xml lays out {len(owned)} OWNED field(s) as PLOWED "
-          f"ready-to-plant: {owned} (NPC fields left blank -> FS25 auto-populates)")
+          f"ready-to-plant: {owned} | baked workable ground for {len(baked)} owned field(s): {baked}")
 
 
 if __name__ == "__main__":

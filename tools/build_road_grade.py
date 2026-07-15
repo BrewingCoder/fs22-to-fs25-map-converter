@@ -11,6 +11,7 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from PIL import Image
 from scipy.ndimage import distance_transform_edt
+from scipy.spatial import cKDTree
 
 WW = os.environ.get("FS_CONVERT_HOME") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 import convert_env
@@ -24,6 +25,8 @@ DEM = os.path.join(OUT, "maps", "data", "map_dem.png")           # our deployed 
 MAP = float(CONV.get("cfg", {}).get("map_m", 8192))
 CORE_M, SHOULDER_M = 4.0, 11.0                                    # full carve within 4 m, blend to 0 by 11 m
 SKIP_M = 5.0                                                     # burial deeper than this = underpass -> don't carve (bimodal: shallow <2m vs deep >6m, nothing between)
+OUTLIER_DROP_M = 2.5                                             # drop road-shape origins whose Y is >this off the LOCAL road-neighbour median (pivot/sub-shape outliers, some -20m, that punch deep shoulder CRATERS). A straight grade has dev~0, so real (even steep) roads are untouched; continuous cuts kept.
+OUTLIER_R = 15.0                                                 # neighbourhood radius (m) for the outlier median test
 
 
 def trs(node):
@@ -63,6 +66,22 @@ def main():
     pts = []
     collect(roads, trs(wwroads), pts)
     p = np.array(pts)
+
+    # DROP lone-outlier road origins before carving: some road shapes' pivots/sub-shapes sit many
+    # metres off the real surface (measured down to -23 m). Carving terrain to them punches deep pits
+    # (the repeating shoulder CRATERS). Reject any point whose Y deviates > OUTLIER_DROP_M from its local
+    # road-neighbour MEDIAN - a straight/steep grade sits ~at its neighbour median (dev~0), so only true
+    # outliers are removed; a continuous cut (all neighbours low too) is kept.
+    nb = cKDTree(p[:, [0, 2]]).query_ball_point(p[:, [0, 2]], OUTLIER_R)
+    keep = np.ones(len(p), bool)
+    for i, idx in enumerate(nb):
+        idx = [j for j in idx if j != i]
+        if idx and abs(p[i, 1] - np.median(p[idx, 1])) > OUTLIER_DROP_M:
+            keep[i] = False
+    ndrop = int((~keep).sum())
+    p = p[keep]
+    print(f"[road_grade] dropped {ndrop} outlier road-origin(s) (>{OUTLIER_DROP_M:.1f} m off local surface = crater sources); {len(p)} kept")
+
     px = np.clip(((p[:, 0] + MAP / 2) / MAP * (H - 1)).round().astype(int), 0, H - 1)
     pz = np.clip(((p[:, 2] + MAP / 2) / MAP * (H - 1)).round().astype(int), 0, H - 1)
 

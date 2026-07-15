@@ -72,3 +72,45 @@ def read_fs22_fields(fs22_i3d):
         name_world = _vec(indicator.get("translation")) if indicator is not None else list(origin)
         out.append(dict(num=num, origin=origin, polygon=world, indicator=name_world))
     return out
+
+
+def resolve_fields(fields, fixups):
+    """Apply per-map `field_fixups` so West-End-style shared-farmland fields fit FS25's ONE-field-per-farmland model
+    (FS25 keeps the first field on a parcel and drops the rest, so the extra farmable polygons vanish). Config-driven,
+    map-agnostic. `fixups` = list of ops:
+      {"merge": [n0,n1,...], "bridge_m": M}  -> union those FS22 fields into ONE field (a morphological close by M
+                                               metres bridges the inter-field headland gaps into a single polygon);
+                                               the result needs its OWN new farmland.
+      {"split": [n0,n1,...]}                 -> give each listed field its OWN new farmland (geometry unchanged);
+                                               use when several DISTINCT fields merely share one parcel.
+    Fields not named in any op pass through unchanged (they already have a 1:1 parcel). Returns resolved field dicts
+    (num, origin, polygon, indicator, new_farmland) sorted by num; `new_farmland=True` marks the ones build_farmland
+    must carve a fresh parcel for. build_fields and build_farmland BOTH call this so the polygons stay identical."""
+    by = {f["num"]: f for f in fields}
+    named, out = set(), []
+    for op in (fixups or []):
+        if op.get("_note"):
+            continue
+        if "merge" in op:
+            nums = [n for n in op["merge"] if n in by]
+            named.update(op["merge"])
+            b = float(op.get("bridge_m", 45))
+            u = unary_union([Polygon(by[n]["polygon"]).buffer(b) for n in nums]).buffer(-b)
+            geom = max(u.geoms, key=lambda g: g.area) if u.geom_type == "MultiPolygon" else u
+            num = min(nums); f0 = by[num]
+            out.append(dict(num=num, origin=f0["origin"], polygon=list(geom.exterior.coords)[:-1],
+                            indicator=[geom.centroid.x, f0["origin"][1], geom.centroid.y],
+                            new_farmland=True, owned=bool(op.get("owned", False))))
+        elif "split" in op:
+            for n in op["split"]:
+                named.add(n)
+                if n in by:
+                    f = by[n]
+                    out.append(dict(num=n, origin=f["origin"], polygon=f["polygon"],
+                                    indicator=f["indicator"], new_farmland=True, owned=bool(op.get("owned", False))))
+    for f in fields:
+        if f["num"] not in named:
+            out.append(dict(num=f["num"], origin=f["origin"], polygon=f["polygon"],
+                            indicator=f["indicator"], new_farmland=False, owned=False))
+    out.sort(key=lambda r: r["num"])
+    return out

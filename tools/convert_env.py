@@ -80,3 +80,37 @@ def source_dir(conv):
     if not mod:
         raise KeyError("config source needs either 'dir' (absolute) or 'mod' (folder name under the FS22 mods root)")
     return os.path.join(os.environ.get("FS22_MODS", default_fs22_mods()), mod)
+
+
+def _map_xml_path(conv):
+    """Locate the FS22 map's map.xml: modDesc <map configFilename=..> if present, else next to the map.i3d.
+    Filenames inside map.xml are relative to the map.xml's own directory (= the map dir)."""
+    import re
+    src = source_dir(conv)
+    md = os.path.join(src, "modDesc.xml")
+    if os.path.exists(md):
+        m = re.search(r'<map\b[^>]*configFilename="([^"]*)"', open(md, encoding="latin1", errors="ignore").read())
+        if m:
+            p = os.path.join(src, m.group(1).replace("/", os.sep))
+            if os.path.exists(p):
+                return p
+    # fallback: map.xml sitting next to the map.i3d
+    return os.path.join(os.path.dirname(os.path.join(src, conv["source"]["map_i3d"].replace("/", os.sep))), "map.xml")
+
+
+def map_ref(conv, tag, default=None):
+    """Resolve a file the FS22 map.xml points at, by ELEMENT NAME (e.g. 'farmlands', 'fields', 'fruitTypes',
+    'fillTypes'). The tag is fixed by FS; the filename is whatever the author chose - so we read it straight from
+    map.xml instead of hardcoding/guessing. Returns an absolute path (resolved against the map.xml's dir), or `default`
+    when map.xml or the ref is absent. This is the map-agnostic way to find these files - no per-map config needed."""
+    import re
+    mx = _map_xml_path(conv)
+    if not os.path.exists(mx):
+        return default
+    m = re.search(r'<%s\b[^>]*filename="([^"]*)"' % re.escape(tag), open(mx, encoding="latin1", errors="ignore").read())
+    if not m:
+        return default
+    # map.xml filenames are relative to the MOD ROOT (WW: "maps/farmlands.xml"; Tallulah: "xml/farmland.xml"), not the
+    # map.xml's own dir. Return it only if it actually exists, so callers cleanly fall back to their conventional path.
+    p = os.path.join(source_dir(conv), m.group(1).replace("/", os.sep))
+    return p if os.path.exists(p) else default
